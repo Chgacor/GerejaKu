@@ -1,4 +1,4 @@
-# GKKD Serdam - Church Community Portal
+# Gereja Ku - Church Community Portal
 
 ## Project Description
 This is a comprehensive web application designed to serve as a community portal and management system for the GKKD Serdam church. It features a public-facing website for members and visitors, along with a secure admin panel for content and member management. The application is built using the **Laravel framework** and styled with **Tailwind CSS**.
@@ -41,7 +41,84 @@ Make sure you have the following installed:
 - MySQL or another compatible database  
 
 ### Installation
-Clone the repository:
-```bash
-git clone [URL_REPOSITORY_ANDA]
-cd [NAMA_FOLDER_PROYEK]
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone [URL_REPOSITORY_ANDA]
+    cd [NAMA_FOLDER_PROYEK]
+    ```
+
+2. **Install PHP dependencies:**
+
+    ```bash
+    composer install
+    ```
+
+3. **Install Node.js dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+4. **Copy the environment file:**
+
+    ```bash
+    cp .env.example .env
+    ```
+
+5. **Generate application key:**
+
+    ```bash
+    php artisan key:generate
+    ```
+
+6. **Configure your database:**
+
+    Open the `.env` file and update the database connection details:
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=db_gereja
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
+
+7. **Run database migrations and seeders:**
+
+    ```bash
+    php artisan migrate:fresh --seed
+    ```
+
+8. **Create the storage link:**
+
+    ```bash
+    php artisan storage:link
+    ```
+
+9. **Compile frontend assets:**
+
+    ```bash
+    npm run dev
+    ```
+
+10. **Start the development server:**
+
+    ```bash
+    php artisan serve
+    ```
+
+    The application will be available at `http://127.0.0.1:8000`.
+
+
+# Technology Stack
+
+- **Backend**: Laravel 12  
+- **Frontend**: Laravel Blade, Tailwind CSS, Alpine.js, Swiper.js  
+- **Database**: MySQL  
+- **Development Environment**: Herd  
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit pull requests.
