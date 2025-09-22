@@ -27,7 +27,15 @@
                     <p class="text-sm text-gray-500 mt-1">Gambar ini akan muncul di bagian atas halaman "Tentang Kami".</p>
                 </div>
                 <div>
-                    <label for="church_history" class="block text-gray-700 font-semibold">Sejarah Gereja (Halaman "Tentang Kami")</label>
+                    <label for="church_vision" class="block text-gray-700 font-semibold">Visi Gereja</label>
+                    <textarea id="church_vision" name="church_vision" rows="5" class="w-full mt-1 p-2 border rounded-lg">{{ $settings['church_vision'] ?? '' }}</textarea>
+                </div>
+                <div>
+                    <label for="church_mission" class="block text-gray-700 font-semibold">Misi Gereja</label>
+                    <textarea id="church_mission" name="church_mission" rows="5" class="w-full mt-1 p-2 border rounded-lg">{{ $settings['church_mission'] ?? '' }}</textarea>
+                </div>
+                <div>
+                    <label for="church_history" class="block text-gray-700 font-semibold">Sejarah Gereja</label>
                     <textarea id="church_history" name="church_history" rows="15" class="w-full mt-1 p-2 border rounded-lg">{{ $settings['church_history'] ?? '' }}</textarea>
                 </div>
             </div>

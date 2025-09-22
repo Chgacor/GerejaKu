@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // --- REGISTRASI ---
     public function showRegisterForm()
     {
         return view('auth.register');
@@ -38,9 +37,8 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Validasi input dari form
         $request->validate([
-            'username' => 'required|string', // atau 'email' jika Anda menggunakan email
+            'username' => 'required|string',
             'password' => 'required',
         ]);
 
@@ -56,17 +54,14 @@ class AuthController extends Controller
                 return redirect()->intended('/admin/jemaat');
             }
 
-            // Jika bukan admin, arahkan ke halaman utama
             return redirect()->intended('/');
         }
 
-        // Jika login gagal
         return back()->withErrors([
             'username' => 'Nama Lengkap atau Password salah.',
         ])->onlyInput('username');
     }
 
-    // --- LOGOUT ---
     public function logout(Request $request)
     {
         Auth::logout();
