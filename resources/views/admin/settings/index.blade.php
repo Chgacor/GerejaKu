@@ -18,6 +18,34 @@
                     <textarea id="weekly_verse" name="weekly_verse" rows="3" class="w-full mt-1 p-2 border rounded-lg">{{ $settings['weekly_verse'] ?? '' }}</textarea>
                     <p class="text-sm text-gray-500 mt-1">Ayat ini akan muncul di bagian footer website.</p>
                 </div>
+
+                <hr class="my-6">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Informasi Kontak & Media Sosial</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="contact_phone" class="block text-gray-700 font-semibold">Nomor Telepon Gereja</label>
+                            <input type="text" id="contact_phone" name="contact_phone" class="w-full mt-1 p-2 border rounded-lg" value="{{ $settings['contact_phone'] ?? '' }}" placeholder="+62 234-5678-910">
+                        </div>
+                        <div>
+                            <label for="contact_instagram" class="block text-gray-700 font-semibold">URL Instagram</label>
+                            <input type="text" id="contact_instagram" name="contact_instagram" class="w-full mt-1 p-2 border rounded-lg" value="{{ $settings['contact_instagram'] ?? '' }}" placeholder="https://www.instagram.com/gerejaku.id">
+                            <p class="text-sm text-gray-500 mt-1">Masukkan URL lengkap.</p>
+                        </div>
+                        <div>
+                            <label for="contact_facebook" class="block text-gray-700 font-semibold">URL Facebook</label>
+                            <input type="text" id="contact_facebook" name="contact_facebook" class="w-full mt-1 p-2 border rounded-lg" value="{{ $settings['contact_facebook'] ?? '' }}" placeholder="https://www.facebook.com/gerejaku.id">
+                            <p class="text-sm text-gray-500 mt-1">Masukkan URL lengkap.</p>
+                        </div>
+                        <div>
+                            <label for="contact_youtube" class="block text-gray-700 font-semibold">URL YouTube</label>
+                            <input type="text" id="contact_youtube" name="contact_youtube" class="w-full mt-1 p-2 border rounded-lg" value="{{ $settings['contact_youtube'] ?? '' }}" placeholder="https://www.youtube.com/@gerejaku.id">
+                            <p class="text-sm text-gray-500 mt-1">Masukkan URL lengkap.</p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-6">
+
                 <div>
                     <label for="about_image" class="block text-gray-700 font-semibold">Gambar Halaman "Tentang Kami"</label>
                     <input type="file" id="about_image" name="about_image" class="w-full mt-1 p-2 border rounded-lg">

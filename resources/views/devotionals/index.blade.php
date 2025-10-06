@@ -6,7 +6,7 @@
         <p class="text-gray-600 mt-2">Kumpulan renungan untuk menemani pertumbuhan iman Anda.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ml-4">
         @forelse($devotionals as $devotional)
             <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300">
                 <img class="h-48 w-full object-cover"

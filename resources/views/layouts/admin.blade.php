@@ -11,7 +11,7 @@
 <nav class="bg-gray-800 text-white shadow-md">
     <div class="container mx-auto px-6 py-3">
         <div class="flex justify-between items-center">
-            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold">Admin Panel</a>
+            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold">{{ config('app.name') }} - Admin Panel</a>
 
             {{-- Menu Desktop --}}
             <div class="hidden md:flex items-center space-x-6">
@@ -36,7 +36,9 @@
                 {!! admin_nav_link(route('admin.devotionals.index'), 'Devosi') !!}
                 {!! admin_nav_link(route('admin.slides.index'), 'Slideshow') !!}
                 {!! admin_nav_link(route('admin.services.index'), 'Ibadah') !!}
-                {!! admin_nav_link(route('admin.pastors.index'), 'Hamba Tuhan') !!}
+                {!! admin_nav_link(route('admin.pastors.index'), 'Profil') !!}
+                {!! admin_nav_link(route('admin.commissions.index'), 'Komisi') !!}
+                {!! admin_nav_link(route('admin.articles.index'), 'Artikel') !!}
                 {!! admin_nav_link(route('admin.events.index'), 'Acara') !!}
                 {!! admin_nav_link(route('admin.settings.index'), 'Pengaturan') !!}
 
@@ -69,8 +71,9 @@
             <a href="{{ route('admin.devotionals.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Devosi</a>
             <a href="{{ route('admin.slides.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Slideshow</a>
             <a href="{{ route('admin.services.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Ibadah</a>
-            <a href="{{ route('admin.pastors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Hamba Tuhan</a>
+            <a href="{{ route('admin.pastors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Profil</a>
             <a href="{{ route('admin.events.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Acara</a>
+            <a href="{{ route('admin.articles.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Artikel</a>
             <a href="{{ route('admin.settings.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Pengaturan</a>
             <a href="{{ route('home') }}" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Lihat Situs Publik</a>
             <form method="POST" action="{{ route('logout') }}">

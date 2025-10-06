@@ -30,6 +30,66 @@
         </div>
     @endif
 
+    <section class="bg-white py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {{-- Judul Bagian --}}
+            <div class="text-center">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                    Berita & Kegiatan Terbaru
+                </h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-gray-600">
+                    Ikuti terus informasi dan kegiatan terbaru dari komisi-komisi di GKKb Serdam.
+                </p>
+            </div>
+
+            {{-- Grid untuk Kartu Artikel --}}
+            <div class="mt-12 grid gap-8 lg:grid-cols-3 md:grid-cols-2">
+                @forelse($artikelTerbaru as $artikel)
+                    <a href="{{ route('articles.show', $artikel->slug) }}" class="block group">
+                        <div class="flex flex-col h-full overflow-hidden rounded-lg shadow-2xl bg-white transition-transform duration-300 group-hover:scale-105">
+                            {{-- Gambar Artikel --}}
+                            <div class="flex-shrink-0">
+                                <img class="h-48 w-full object-cover" src="{{ $artikel->cover_image ? asset('storage/' . $artikel->cover_image) : 'https://via.placeholder.com/400x250.png?text=GKKb+Serdam' }}" alt="{{ $artikel->title }}">
+                            </div>
+
+                            {{-- Konten Kartu --}}
+                            <div class="flex flex-1 flex-col justify-between p-6 bg-white">
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-blue-600">
+                                        <span class="hover:underline">{{ optional($artikel->commission)->name }}</span>
+                                    </p>
+                                    <p class="mt-2 text-xl font-semibold text-gray-900">
+                                        {{ $artikel->title }}
+                                    </p>
+                                    <p class="mt-3 text-base text-gray-500">
+                                        {{ Str::limit(strip_tags($artikel->content), 120) }}
+                                    </p>
+                                </div>
+                                <div class="mt-6">
+                                    <span class="font-semibold text-blue-700 group-hover:text-blue-800">
+                                        Baca Selengkapnya &rarr;
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="lg:col-span-3 text-center py-12">
+                        <p class="text-gray-500">Belum ada berita untuk ditampilkan saat ini.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- Tombol Lihat Semua --}}
+            <div class="mt-12 text-center">
+                <a href="{{ route('articles.index') }}" class="inline-block rounded-md bg-blue-600 px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Lihat Semua Artikel
+                </a>
+            </div>
+        </div>
+    </section>
+
+
     {{-- Slideshow Ibadah Mendatang --}}
     @if($upcomingServices->isNotEmpty())
         <div class="container mx-auto px-6 py-16">
@@ -80,7 +140,6 @@
             navigation: { nextEl: '.hero-button-next', prevEl: '.hero-button-prev' },
         });
 
-        const serviceSlidesCount = {{ $upcomingServices->count() }};
         const serviceSwiper = new Swiper('.service-swiper', {
             loop: true,
             slidesPerView: 1,
@@ -94,3 +153,4 @@
         });
     </script>
 @endpush
+

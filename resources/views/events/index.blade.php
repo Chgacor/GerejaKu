@@ -8,11 +8,7 @@
             <div id='calendar' class="text-sm md:text-base"></div>
         </div>
     </div>
-
-    <!-- ====================================================== -->
-    <!-- ============= MODAL POP-UP DETAIL ACARA ============= -->
-    <!-- ====================================================== -->
-    <div id="event-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
+    <div id="event-modal" class="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
         <div id="modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-lg transform scale-95 transition-transform duration-300">
             <div class="p-6">
                 <div class="flex justify-between items-start">
@@ -51,12 +47,10 @@
                 modalContent.classList.add('scale-95');
             };
 
+            // Event listener untuk tombol close (tetap ada)
             modalCloseBtn.addEventListener('click', closeModal);
-            eventModal.addEventListener('click', (event) => {
-                if (event.target === eventModal) {
-                    closeModal();
-                }
-            });
+
+            // Event listener untuk klik di background (SUDAH DIHAPUS)
 
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {

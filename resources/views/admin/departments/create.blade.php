@@ -5,7 +5,7 @@
         <form action="{{ route('admin.departments.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @include('admin.departments.form-fields')
-            <button type="submit" class="bg-blue-500 ...">Simpan</button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Simpan</button>
         </form>
     </div>
 @endsection

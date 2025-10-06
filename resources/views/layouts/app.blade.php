@@ -57,7 +57,7 @@
                 </div>
 
                 <div class="md:hidden">
-                    <button id="admin-burger-btn" class="text-white focus:outline-none">
+                    <button data-toggle-button data-toggle-target="#admin-mobile-menu" class="text-white focus:outline-none">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <div id="admin-mobile-menu" class="hidden md:hidden mt-3 space-y-1">
+            <div id="admin-mobile-menu" class="hidden md:hidden mt-3 space-y-1" data-toggle-menu>
                 <a href="{{ route('admin.jemaat.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Jemaat</a>
                 <a href="{{ route('admin.devotionals.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Devosi</a>
                 <a href="{{ route('admin.slides.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Slideshow</a>
@@ -110,7 +110,7 @@
                 {!! public_nav_link(route('events.index'), 'Jadwal', true) !!}
                 {!! public_nav_link(route('devotionals.index'), 'Devosi', true) !!}
                 {!! public_nav_link(route('about'), 'Sejarah Gereja') !!}
-                {!! public_nav_link(route('pastors.index'), 'Profil Hamba Tuhan') !!}
+                {!! public_nav_link(route('pastors.index'), 'Profil GKKB') !!}
             </div>
             <div class="hidden md:flex items-center">
                 @guest
@@ -121,7 +121,7 @@
                 @endguest
                 @auth
                     <div class="relative">
-                        <button id="profile-menu-button" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                        <button data-toggle-button data-toggle-target="#profile-menu" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
                             @if (Auth::user()->foto_profil)
                                 <img class="h-8 w-8 rounded-full object-cover" src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ Auth::user()->nama_lengkap }}">
                             @else
@@ -130,7 +130,7 @@
                                 </div>
                             @endif
                         </button>
-                        <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 js-dropdown">
+                        <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50" data-toggle-menu>
                             @if (Auth::user()->role === 'admin')
                                 <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold bg-yellow-100">
                                     Admin Panel
@@ -148,27 +148,24 @@
                 @endauth
             </div>
             <div class="md:hidden flex items-center">
-                <button id="public-burger-btn" class="text-gray-600 focus:outline-none">
+                <button data-toggle-button data-toggle-target="#public-mobile-menu" class="text-gray-600 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                     </svg>
                 </button>
             </div>
         </div>
-        <div id="public-mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-1">
+        <div id="public-mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-1" data-toggle-menu>
             <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Home</a>
             <a href="{{ route('events.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Jadwal</a>
             <a href="{{ route('devotionals.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Devosi</a>
             <a href="{{ route('about') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Sejarah Gereja</a>
-            <a href="{{ route('pastors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Profil Hamba Tuhan</a>
-
+            <a href="{{ route('pastors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Profil GKKB</a>
             <hr class="my-2 border-gray-200">
-
             @guest
                 <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Login</a>
                 <a href="{{ route('register') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Register</a>
             @endguest
-
             @auth
                 @if (Auth::user()->role === 'admin')
                     <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Admin Panel</a>
@@ -197,13 +194,41 @@
 
 @if (!$isAdminRoute)
     <footer class="bg-gray-800 text-white py-10 mt-10">
-        <div class="container mx-auto text-center">
+        <div class="container mx-auto text-center px-4">
             @if(isset($weeklyVerse) && $weeklyVerse->value)
                 <div class="mb-6 max-w-2xl mx-auto">
                     <p class="text-lg italic text-gray-300">"{{ $weeklyVerse->value }}"</p>
                 </div>
             @endif
-            <p>&copy; {{ date('Y') }} {{ config('app.name', 'GKKB Serdam') }}. All Rights Reserved.</p>
+
+            <div class="mb-4">
+                    @if(isset($contactSettings['contact_phone']))
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $contactSettings['contact_phone']) }}" class="text-gray-400 hover:text-white mx-2 inline-block">
+                            Telepon: {{ $contactSettings['contact_phone'] }}
+                        </a>
+                    @endif
+
+                    @if(isset($contactSettings['contact_instagram']))
+                        <a href="{{ $contactSettings['contact_instagram'] }}" target="_blank" class="text-gray-400 hover:text-white mx-2 inline-block">
+                            Instagram
+                        </a>
+                    @endif
+
+                    @if(isset($contactSettings['contact_facebook']))
+                        <a href="{{ $contactSettings['contact_facebook'] }}" target="_blank" class="text-gray-400 hover:text-white mx-2 inline-block">
+                            Facebook
+                        </a>
+                    @endif
+
+                    @if(isset($contactSettings['contact_youtube']))
+                        <a href="{{ $contactSettings['contact_youtube'] }}" target="_blank" class="text-gray-400 hover:text-white mx-2 inline-block">
+                            YouTube
+                        </a>
+                    @endif
+            </div>
+
+
+            <p class="text-sm text-gray-500">&copy; {{ date('Y') }} {{ config('app.name', 'GKKB Serdam') }}. All Rights Reserved.</p>
         </div>
     </footer>
 @endif
@@ -213,58 +238,37 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const setupMenuToggle = (buttonId, menuId) => {
-            const button = document.getElementById(buttonId);
-            const menu = document.getElementById(menuId);
+        const allToggleMenus = document.querySelectorAll('[data-toggle-menu]');
+        const allToggleButtons = document.querySelectorAll('[data-toggle-button]');
 
-            if (button && menu) {
-                button.addEventListener('click', (event) => {
-                    event.stopPropagation();
+        allToggleButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.stopPropagation(); // Mencegah window click event terpicu
 
-                    document.querySelectorAll('.js-dropdown').forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            otherMenu.classList.add('hidden');
+                const targetSelector = button.dataset.toggleTarget;
+                const targetMenu = document.querySelector(targetSelector);
+
+                if (targetMenu) {
+                    // Tutup semua menu lain sebelum membuka menu yang baru
+                    allToggleMenus.forEach(menu => {
+                        if (menu !== targetMenu) {
+                            menu.classList.add('hidden');
                         }
                     });
 
-                    menu.classList.toggle('hidden');
-                });
-            }
-        };
-
-        setupMenuToggle('profile-menu-button', 'profile-menu');
-
-        const adminBurgerBtn = document.getElementById('admin-burger-btn');
-        const adminMobileMenu = document.getElementById('admin-mobile-menu');
-        if(adminBurgerBtn && adminMobileMenu){
-            adminBurgerBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                adminMobileMenu.classList.toggle('hidden');
+                    // Buka/tutup menu yang ditargetkan
+                    targetMenu.classList.toggle('hidden');
+                }
             });
-        }
+        });
 
-        const publicBurgerBtn = document.getElementById('public-burger-btn');
-        const publicMobileMenu = document.getElementById('public-mobile-menu');
-        if(publicBurgerBtn && publicMobileMenu){
-            publicBurgerBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                publicMobileMenu.classList.toggle('hidden');
-            });
-        }
-
+        // Event listener untuk menutup semua menu jika klik di luar area
         window.addEventListener('click', () => {
-            document.querySelectorAll('.js-dropdown').forEach(menu => {
+            allToggleMenus.forEach(menu => {
                 menu.classList.add('hidden');
             });
-            if(adminMobileMenu && !adminMobileMenu.classList.contains('hidden')){
-                adminMobileMenu.classList.add('hidden');
-            }
-            if(publicMobileMenu && !publicMobileMenu.classList.contains('hidden')){
-                publicMobileMenu.classList.add('hidden');
-            }
         });
     });
 </script>
 </body>
 </html>
-

@@ -9,5 +9,17 @@ class Pastor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'position', 'photo', 'bio'];
+    protected $fillable = [
+        'name',
+        'position',
+        'bio',
+        'photo',
+        'kelompok',      // <-- TAMBAHKAN INI
+        'commission_id', // <-- TAMBAHKAN INI
+    ];
+
+    public function commission()
+    {
+        return $this->belongsTo(Commission::class);
+    }
 }
