@@ -91,19 +91,13 @@ Make sure you have the following installed:
     php artisan migrate:fresh --seed
     ```
 
-8. **Create the storage link:**
-
-    ```bash
-    php artisan storage:link
-    ```
-
-9. **Compile frontend assets:**
+8. **Compile frontend assets:**
 
     ```bash
     npm run dev
     ```
 
-10. **Start the development server:**
+9. **Start the development server:**
 
     ```bash
     php artisan serve
