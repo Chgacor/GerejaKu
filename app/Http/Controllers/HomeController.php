@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Commission;
+use App\Models\CommissionArticle;
+use App\Models\Jemaat;
+use App\Models\Pastor;
+use App\Models\Qna;
+use App\Models\Service;
 use App\Models\Setting;
 use App\Models\Slide;
-use App\Models\Service;
-use App\Models\Pastor;
-use App\Models\CommissionArticle;
-use App\Models\Commission;
+use App\Notifications\NewQuestionSubmitted;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class HomeController extends Controller
 {
@@ -29,7 +34,12 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('home', compact('slides', 'upcomingServices', 'artikelTerbaru'));
+        $publishedQnas = Qna::where('is_published', true)
+            ->latest('answered_at')
+            ->take(5)
+            ->get();
+
+        return view('home', compact('slides', 'upcomingServices', 'artikelTerbaru', 'publishedQnas'));
     }
 
     /**
@@ -50,5 +60,26 @@ class HomeController extends Controller
         $allProfiles = Pastor::with('commission')->orderBy('kelompok')->orderBy('name')->get();
         $groupedProfiles = $allProfiles->groupBy('kelompok');
         return view('pastors.index', compact('groupedProfiles'));
+    }
+
+    public function storeQna(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'question' => 'required|string|max:5000',
+        ]);
+
+        $qna = Qna::create($validatedData);
+
+        // Kirim notifikasi email ke semua admin
+        $admins = Jemaat::where('role', 'admin')->get();
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new NewQuestionSubmitted($qna));
+        }
+
+        // Kembali ke halaman utama dengan pesan sukses
+        return redirect('/#qna-section')->with('success_qna', 'Pertanyaan Anda telah berhasil terkirim. Terima kasih!');
     }
 }

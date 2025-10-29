@@ -12,6 +12,8 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\NotificationSubscriptionController;
+use App\Http\Controllers\NotificationController;
 
 // --- ADMIN CONTROLLERS ---
 use App\Http\Controllers\Admin\JemaatController as AdminJemaatController;
@@ -24,6 +26,7 @@ use App\Http\Controllers\Admin\PastorController as AdminPastorController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\CommissionController as AdminCommissionController;
 use App\Http\Controllers\Admin\CommissionArticleController as AdminCommissionArticleController;
+use App\Http\Controllers\Admin\QnaController as AdminQnaController;
 
 
 /*
@@ -50,12 +53,13 @@ Route::get('/ibadah/{service}', [ServiceController::class, 'show'])->name('servi
 Route::get('/jadwal-acara', [EventController::class, 'index'])->name('events.index');
 Route::get('/api/events', [EventController::class, 'json'])->name('events.json');
 
-// Rute Komisi & Berita (Publik)
 Route::get('/komisi', [CommissionController::class, 'index'])->name('commissions.index');
 Route::get('/komisi/{commission:slug}', [CommissionController::class, 'show'])->name('commissions.show');
 Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/berita/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
 
+Route::post('/ajukan-pertanyaan', [App\Http\Controllers\HomeController::class, 'storeQna'])->name('qna.store');
+Route::post('/notifications/subscribe', [NotificationSubscriptionController::class, 'store'])->name('notifications.subscribe');
 
 //=====================================
 // 2. RUTE AUTENTIKASI
@@ -97,5 +101,15 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('articles', [AdminCommissionArticleController::class, 'index'])->name('articles.index');
     Route::get('articles/create', [AdminCommissionArticleController::class, 'create'])->name('articles.create');
     Route::post('articles', [AdminCommissionArticleController::class, 'store'])->name('articles.store');
+
+    Route::resource('qna', AdminQnaController::class)->except(['create', 'store', 'show']);
+});
+
+// =====================================
+// 4. RUTE UNTUK FITUR NOTIFIKASI
+// =====================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 });
 

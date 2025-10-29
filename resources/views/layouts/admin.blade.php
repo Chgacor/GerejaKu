@@ -40,6 +40,7 @@
                 {!! admin_nav_link(route('admin.commissions.index'), 'Komisi') !!}
                 {!! admin_nav_link(route('admin.articles.index'), 'Artikel') !!}
                 {!! admin_nav_link(route('admin.events.index'), 'Acara') !!}
+                {!! admin_nav_link(route('admin.qna.index'), 'QnA') !!}
                 {!! admin_nav_link(route('admin.settings.index'), 'Pengaturan') !!}
 
                 <a href="{{ route('home') }}" target="_blank"
@@ -74,6 +75,7 @@
             <a href="{{ route('admin.pastors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Profil</a>
             <a href="{{ route('admin.events.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Acara</a>
             <a href="{{ route('admin.articles.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Artikel</a>
+            <a href="{{ route('admin.qna.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">QnA</a>
             <a href="{{ route('admin.settings.index') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Pengaturan</a>
             <a href="{{ route('home') }}" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Lihat Situs Publik</a>
             <form method="POST" action="{{ route('logout') }}">

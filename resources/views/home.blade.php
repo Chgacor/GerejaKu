@@ -125,6 +125,51 @@
         </div>
     @endif
 
+    <section id="qna-section" class="bg-gray-100 py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+                {{-- Kolom Kiri: Form Pertanyaan --}}
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Punya Pertanyaan?</h2>
+                    @if (session('success_qna'))
+                        <div class="bg-green-100 text-green-700 p-4 mb-4 rounded">
+                            {{ session('success_qna') }}
+                        </div>
+                    @endif
+                    <form action="{{ route('qna.store') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <input type="text" name="name" placeholder="Nama Anda" class="w-full p-2 border rounded-lg" required>
+                        <input type="email" name="email" placeholder="Alamat Email" class="w-full p-2 border rounded-lg" required>
+                        <input type="text" name="subject" placeholder="Subjek" class="w-full p-2 border rounded-lg" required>
+                        <textarea name="question" rows="5" placeholder="Tulis pertanyaan Anda di sini..." class="w-full p-2 border rounded-lg" required></textarea>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg">Kirim Pertanyaan</button>
+                    </form>
+                </div>
+
+                {{-- Kolom Kanan: Daftar Pertanyaan Terpublikasi --}}
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-900">Tanya Jawab Terkini</h2>
+                    <div class="mt-8 space-y-6">
+                        @forelse ($publishedQnas as $qna)
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <p class="font-bold text-lg text-gray-800">{{ $qna->question }}</p>
+                                <div class="mt-4 pt-4 border-t text-gray-700">
+                                    {!! nl2br(e($qna->answer)) !!}
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-12 bg-white rounded-lg shadow-md">
+                                <p class="text-gray-500">Belum ada pertanyaan yang dipublikasikan.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <div class="text-center my-12 container mx-auto px-6">
         <h1 class="text-4xl font-bold text-gray-800">Selamat Datang di Portal GKKB Serdam</h1>
         <p class="mt-4 text-lg text-gray-600">Tempat kita bertumbuh bersama dalam iman dan persekutuan.</p>
