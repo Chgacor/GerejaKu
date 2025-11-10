@@ -34,7 +34,18 @@ class DevotionalController extends Controller
             $data['image'] = $path;
         }
 
-        Devotional::create($data);
+        $devotional = Devotional::create($data);
+
+        $jemaats = \App\Models\Jemaat::all();
+        \Illuminate\Support\Facades\Notification::send(
+            $jemaats,
+            new \App\Notifications\NewContentNotification(
+                'Renungan Baru: ' . $devotional->title,
+                'Renungan terbaru telah ditambahkan: ' . $devotional->title . '. Baca sekarang!',
+                route('devotionals.show', $devotional->id),
+                'devotional'
+            )
+        );
 
         return redirect()->route('admin.devotionals.index')->with('success', 'Renungan berhasil dibuat.');
     }

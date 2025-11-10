@@ -167,13 +167,10 @@
                 @endguest
                 @auth
                     <div class="flex items-center">
-                        {{-- ===================================== --}}
-                        {{-- INI DIA LONCENG NOTIFIKASI           --}}
-                        {{-- ===================================== --}}
                         <div class="relative" id="notification-bell-container">
                             <button id="notification-bell-button" data-toggle-button data-toggle-target="#notification-dropdown" class="text-gray-600 hover:text-blue-600 focus:outline-none mr-5">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                                <span id="notification-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden"></span>
+                                <span id="notification-count" class="absolute end-4 -top-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden"></span>
                             </button>
                             <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden" data-toggle-menu>
                                 <div class="p-4 font-bold border-b flex justify-between items-center">
@@ -213,11 +210,11 @@
             <div class="md:hidden flex items-center">
                 @auth {{-- Tampilkan lonceng di mobile jika login --}}
                 <div class="relative mr-4" id="notification-bell-container-mobile">
-                    <button id="notification-bell-button-mobile" data-toggle-button data-toggle-target="#notification-dropdown-mobile" class="text-gray-600 hover:text-blue-600 focus:outline-none mr-5">
+                    <button id="notification-bell-button-mobile" data-toggle-button data-toggle-target="#notification-dropdown-mobile" class="text-gray-600 hover:text-blue-600 focus:outline-none mr-5 relative">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span id="notification-count-mobile" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden"></span>
                     </button>
-                    <div id="notification-dropdown-mobile" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden" data-toggle-menu>
+                    <div id="notification-dropdown-mobile" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden relative" data-toggle-menu>
                         <div class="p-4 font-bold border-b flex justify-between items-center"><span>Notifikasi</span><button id="mark-all-read-mobile" class="text-xs text-blue-500 hover:underline focus:outline-none">Tandai semua dibaca</button></div>
                         <div id="notification-list-mobile" class="max-h-96 overflow-y-auto"><p class="text-center text-gray-400 p-4 text-sm">Memuat...</p></div>
                     </div>
@@ -279,14 +276,11 @@
         </div>
     </footer>
 
-    {{-- Tombol subscribe Web Push SUDAH DIHAPUS --}}
-
 @endif
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 @stack('scripts')
 
-{{-- Skrip Toggle Menu Umum (Admin & Publik) --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const allToggleMenus = document.querySelectorAll('[data-toggle-menu]');
@@ -314,23 +308,16 @@
     });
 </script>
 
-{{-- ===================================== --}}
-{{-- HANYA LOGIKA NOTIFIKASI LONCENG       --}}
-{{-- ===================================== --}}
 @auth
     @if (!$isAdminRoute)
-        {{-- [BARU] Impor Laravel Echo & Pusher. Anda mungkin perlu 'npm install laravel-echo pusher-js' --}}
         @vite('resources/js/app.js')
-        {{-- Pastikan app.js Anda mengimpor 'bootstrap.js' seperti setup default Laravel --}}
+
 
         <script type="module">
-            // Kita pindahkan fungsi ini ke luar agar bisa diakses secara global oleh script ini
+
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            /**
-             * [PERUBAHAN] Fungsi updateUI dibuat terpisah
-             * agar bisa dipanggil oleh fetchNotifications
-             */
+
             function updateUI(notifications, listId, countId) {
                 const countBadge = document.getElementById(countId);
                 const notificationList = document.getElementById(listId);
@@ -353,17 +340,14 @@
                 }
             }
 
-            /**
-             * [PERUBAHAN] Fungsi fetchNotifications dibuat terpisah
-             * agar bisa dipanggil oleh Echo atau interval
-             */
+
             function fetchAllNotifications() {
                 fetch('{{ route("notifications.index") }}', {
                     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                 })
                     .then(res => res.ok ? res.json() : Promise.reject('Failed to fetch'))
                     .then(notifications => {
-                        // Update kedua UI (Desktop & Mobile) saat data baru didapat
+
                         updateUI(notifications, 'notification-list', 'notification-count');
                         updateUI(notifications, 'notification-list-mobile', 'notification-count-mobile');
                     })
@@ -376,7 +360,6 @@
                     });
             }
 
-            // Fungsi untuk menandai semua dibaca
             function markAllNotificationsRead(event) {
                 event.stopPropagation();
                 fetch('{{ route("notifications.read") }}', {
@@ -390,10 +373,9 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                // --- Logika untuk Notifikasi Lonceng (In-App) ---
                 function setupBell(containerId, markAllReadId) {
                     const container = document.getElementById(containerId);
-                    if (!container) return; // Jika container tidak ada, hentikan
+                    if (!container) return;
 
                     const markAllReadBtn = document.getElementById(markAllReadId);
                     if (markAllReadBtn) {
@@ -401,29 +383,24 @@
                     }
                 }
 
-                // Setup untuk lonceng desktop
+
                 setupBell('notification-bell-container', 'mark-all-read');
-                // Setup untuk lonceng mobile
+
                 setupBell('notification-bell-container-mobile', 'mark-all-read-mobile');
 
-                // Panggil saat dimuat pertama kali
                 fetchAllNotifications();
 
-                // Refresh notifikasi setiap 1 menit (Opsional, Echo lebih baik)
                 setInterval(fetchAllNotifications, 60000);
 
-                // --- [INI BAGIAN BARU] ---
-                // Setup Laravel Echo untuk mendengarkan broadcast
+
                 if (window.Echo) {
-                    // Dapatkan ID user yang sedang login
+
                     const userId = {{ Auth::user()->id }};
 
                     window.Echo.private(`App.Models.User.${userId}`)
                         .notification((notification) => {
                             console.log('NOTIFIKASI BARU DITERIMA:', notification);
 
-                            // Panggil fungsi fetchAllNotifications() untuk memperbarui UI
-                            // secara instan saat notifikasi baru masuk
                             fetchAllNotifications();
                         });
 
@@ -431,7 +408,6 @@
                 } else {
                     console.warn('Laravel Echo is not defined. Real-time notifications will not work.');
                 }
-                // --- [AKHIR BAGIAN BARU] ---
             });
         </script>
     @endif

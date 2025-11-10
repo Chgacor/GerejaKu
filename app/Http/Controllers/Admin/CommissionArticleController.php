@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Commission;
 use App\Models\CommissionArticle;
-use App\Models\Jemaat; // Pastikan ini adalah model User Anda yang menggunakan trait Notifiable
+use App\Models\Jemaat;
 use App\Notifications\NewContentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Notification; // [FIX] Ditambahkan kembali
+use Illuminate\Support\Facades\Notification;
 
 class CommissionArticleController extends Controller
 {
@@ -43,14 +43,8 @@ class CommissionArticleController extends Controller
         $validatedData['slug'] = $this->createUniqueSlug($validatedData['title']);
         $article = CommissionArticle::create($validatedData);
 
-        // --- [FIX] Logika Notifikasi Diperbaiki ---
-        // Cek apakah artikel ini dianggap "terbit"
-        // (Asumsinya: null = terbit sekarang, atau tanggal di masa lalu/kini)
-        $isPublished = $article->published_at === null || $article->published_at <= now();
-
-        if ($isPublished) {
-            $this->sendPublicationNotification($article);
-        }
+        // --- [FIX] Mengganti . menjadi -> ---
+        $this->sendPublicationNotification($article, 'Berita Baru: ');
         // --- Akhir Perbaikan ---
 
         $redirectRoute = $commission ? 'admin.commissions.articles.index' : 'admin.articles.index';
@@ -74,9 +68,6 @@ class CommissionArticleController extends Controller
             'published_at' => 'nullable|date',
         ]);
 
-        // [FIX] Simpan status terbit SEBELUM update
-        $wasPublished = $article->published_at === null || $article->published_at <= now();
-
         if ($request->hasFile('cover_image')) {
             if ($article->cover_image) Storage::disk('public')->delete($article->cover_image);
             $validatedData['cover_image'] = $request->file('cover_image')->store('articles', 'public');
@@ -87,13 +78,7 @@ class CommissionArticleController extends Controller
 
         $article->update($validatedData);
 
-        // [FIX] Cek status terbit SETELAH update
-        $isNowPublished = $article->published_at === null || $article->published_at <= now();
-
-        // Kirim notifikasi HANYA jika status berubah dari "belum" ke "sudah"
-        if (!$wasPublished && $isNowPublished) {
-            $this->sendPublicationNotification($article);
-        }
+        $this->sendPublicationNotification($article, 'Berita Diperbarui: ');
 
         return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil diperbarui.');
     }
@@ -113,24 +98,22 @@ class CommissionArticleController extends Controller
     }
 
     /**
-     * [BARU] Fungsi terpusat untuk mengirim notifikasi
+     * Fungsi terpusat untuk mengirim notifikasi
      */
-    private function sendPublicationNotification(CommissionArticle $article)
+    private function sendPublicationNotification(CommissionArticle $article, string $titlePrefix)
     {
-        dd('MASUK TES NOTIFIKASI');
-        // Ganti Jemaat::all() jika Anda ingin target yang lebih spesifik
-        // Ganti Jemaat::class dengan model User Anda (misal: App\Models\User)
-        $subscribers = Jemaat::where('role', '!=', 'admin')->get();
+
+        $subscribers = Jemaat::all();
 
         if ($subscribers->isEmpty()) {
-            return; // Tidak ada penerima, hentikan
+            return;
         }
 
-        $title = 'Berita Baru: ' . Str::limit($article->title, 30);
-        $body = 'Artikel baru telah dipublikasikan.';
+        $title = $titlePrefix . Str::limit($article->title, 30);
+        $body = 'Artikel "' . Str::limit($article->title, 40) . '..." telah dipublikasikan.';
         $url = route('articles.show', $article->slug);
 
-        // [FIX] Menggunakan Facade 'Notification' yang sudah di-import
         Notification::send($subscribers, new NewContentNotification($title, $body, $url, 'berita'));
     }
 }
+

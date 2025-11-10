@@ -29,14 +29,14 @@ class HomeController extends Controller
             ->get();
 
         $artikelTerbaru = CommissionArticle::with('commission')
-            ->whereNotNull('published_at') // <--- INI KUNCINYA
+            ->whereNotNull('published_at')
             ->latest('published_at')
             ->take(3)
             ->get();
 
         $publishedQnas = Qna::where('is_published', true)
             ->latest('answered_at')
-            ->take(5)
+            ->take(3)
             ->get();
 
         return view('home', compact('slides', 'upcomingServices', 'artikelTerbaru', 'publishedQnas'));
@@ -66,20 +66,29 @@ class HomeController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email',
             'subject' => 'required|string|max:255',
-            'question' => 'required|string|max:5000',
+            'question' => 'required|string',
         ]);
 
         $qna = Qna::create($validatedData);
 
-        // Kirim notifikasi email ke semua admin
         $admins = Jemaat::where('role', 'admin')->get();
-        if ($admins->isNotEmpty()) {
-            Notification::send($admins, new NewQuestionSubmitted($qna));
-        }
 
-        // Kembali ke halaman utama dengan pesan sukses
-        return redirect('/#qna-section')->with('success_qna', 'Pertanyaan Anda telah berhasil terkirim. Terima kasih!');
+        Notification::send($admins, new NewQuestionSubmitted($qna));
+
+        return redirect()->back()->with('success_qna', 'Pertanyaan Anda telah terkirim!');
+    }
+
+    /**
+     * Menampilkan halaman arsip Q&A (baru).
+     */
+    public function showQnaArchive(Request $request)
+    {
+        $allQna = Qna::where('is_published', true)
+            ->latest('answered_at')
+            ->paginate(10);
+
+        return view('qna_archive', compact('allQna'));
     }
 }

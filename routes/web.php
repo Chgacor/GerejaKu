@@ -60,6 +60,7 @@ Route::get('/berita/{article:slug}', [ArticleController::class, 'show'])->name('
 
 Route::post('/ajukan-pertanyaan', [App\Http\Controllers\HomeController::class, 'storeQna'])->name('qna.store');
 Route::post('/notifications/subscribe', [NotificationSubscriptionController::class, 'store'])->name('notifications.subscribe');
+Route::get('/tanya-jawab', [HomeController::class, 'showQnaArchive'])->name('qna.archive');
 
 //=====================================
 // 2. RUTE AUTENTIKASI

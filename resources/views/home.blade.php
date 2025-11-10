@@ -162,8 +162,19 @@
                             <div class="text-center py-12 bg-white rounded-lg shadow-md">
                                 <p class="text-gray-500">Belum ada pertanyaan yang dipublikasikan.</p>
                             </div>
-                        @endforelse
+                        @endforelse {{-- <--- INI SUDAH DIPERBAIKI --}}
                     </div>
+
+                    {{-- === INI BAGIAN BARU YANG DITAMBAHKAN === --}}
+                    @if ($publishedQnas->count() > 0)
+                        <div class="mt-10 text-center">
+                            <a href="{{ route('qna.archive') }}" class="inline-block rounded-md bg-blue-600 px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                Lihat Semua Arsip Tanya Jawab
+                            </a>
+                        </div>
+                    @endif
+                    {{-- === AKHIR DARI BAGIAN BARU === --}}
+
                 </div>
 
             </div>
