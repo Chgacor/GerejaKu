@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- Slideshow Utama --}}
     @if($slides->isNotEmpty())
         <div class="swiper hero-swiper h-96">
             <div class="swiper-wrapper">
@@ -32,7 +31,7 @@
 
     <section class="bg-white py-16 sm:py-20">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {{-- Judul Bagian --}}
+
             <div class="text-center">
                 <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                     Berita & Kegiatan Terbaru
@@ -42,17 +41,14 @@
                 </p>
             </div>
 
-            {{-- Grid untuk Kartu Artikel --}}
             <div class="mt-12 grid gap-8 lg:grid-cols-3 md:grid-cols-2">
                 @forelse($artikelTerbaru as $artikel)
                     <a href="{{ route('articles.show', $artikel->slug) }}" class="block group">
                         <div class="flex flex-col h-full overflow-hidden rounded-lg shadow-2xl bg-white transition-transform duration-300 group-hover:scale-105">
-                            {{-- Gambar Artikel --}}
                             <div class="flex-shrink-0">
                                 <img class="h-48 w-full object-cover" src="{{ $artikel->cover_image ? asset('storage/' . $artikel->cover_image) : 'https://via.placeholder.com/400x250.png?text=GKKb+Serdam' }}" alt="{{ $artikel->title }}">
                             </div>
 
-                            {{-- Konten Kartu --}}
                             <div class="flex flex-1 flex-col justify-between p-6 bg-white">
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-blue-600">
@@ -80,7 +76,6 @@
                 @endforelse
             </div>
 
-            {{-- Tombol Lihat Semua --}}
             <div class="mt-12 text-center">
                 <a href="{{ route('articles.index') }}" class="inline-block rounded-md bg-blue-600 px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Lihat Semua Artikel
@@ -89,8 +84,6 @@
         </div>
     </section>
 
-
-    {{-- Slideshow Ibadah Mendatang --}}
     @if($upcomingServices->isNotEmpty())
         <div class="container mx-auto px-6 py-16">
             <div class="text-center mb-12">
@@ -129,7 +122,6 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-                {{-- Kolom Kiri: Form Pertanyaan --}}
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Punya Pertanyaan?</h2>
                     @if (session('success_qna'))
@@ -147,7 +139,6 @@
                     </form>
                 </div>
 
-                {{-- Kolom Kanan: Daftar Pertanyaan Terpublikasi --}}
                 <div>
                     <h2 class="text-3xl font-bold tracking-tight text-gray-900">Tanya Jawab Terkini</h2>
                     <div class="mt-8 space-y-6">
@@ -162,10 +153,9 @@
                             <div class="text-center py-12 bg-white rounded-lg shadow-md">
                                 <p class="text-gray-500">Belum ada pertanyaan yang dipublikasikan.</p>
                             </div>
-                        @endforelse {{-- <--- INI SUDAH DIPERBAIKI --}}
+                        @endforelse
                     </div>
 
-                    {{-- === INI BAGIAN BARU YANG DITAMBAHKAN === --}}
                     @if ($publishedQnas->count() > 0)
                         <div class="mt-10 text-center">
                             <a href="{{ route('qna.archive') }}" class="inline-block rounded-md bg-blue-600 px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -173,7 +163,6 @@
                             </a>
                         </div>
                     @endif
-                    {{-- === AKHIR DARI BAGIAN BARU === --}}
 
                 </div>
 
