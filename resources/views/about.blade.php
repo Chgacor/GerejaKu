@@ -11,30 +11,28 @@
         @endif
 
         {{-- Judul Utama --}}
-        <h1 class="text-4xl font-bold text-gray-800 mb-6 border-b pb-4">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6 border-b pb-4 text-center">
             Tentang Kami
         </h1>
 
         {{-- Section Visi --}}
         <div class="mt-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Visi Kami</h2>
-            <div class="prose max-w-none text-gray-700 leading-relaxed">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Visi Kami</h2>
+            <div class="prose max-w-none text-gray-700 leading-relaxed text-center">
                 {!! nl2br(e($settings['church_vision'] ?? 'Konten Visi belum tersedia.')) !!}
             </div>
         </div>
 
-        {{-- Section Misi --}}
         <div class="mt-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Misi Kami</h2>
-            <div class="prose max-w-none text-gray-700 leading-relaxed">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Misi Kami</h2>
+            <div class="prose max-w-none text-gray-700 leading-relaxed text-center">
                 {!! nl2br(e($settings['church_mission'] ?? 'Konten Misi belum tersedia.')) !!}
             </div>
         </div>
 
-        {{-- Section Sejarah --}}
         <div class="mt-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Sejarah Kami</h2>
-            <div class="prose max-w-none text-gray-700 leading-relaxed">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Sejarah Kami</h2>
+            <div class="prose max-w-none text-gray-700 leading-relaxed text-center">
                 {!! nl2br(e($settings['church_history'] ?? 'Konten Sejarah belum tersedia.')) !!}
             </div>
         </div>
