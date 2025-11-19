@@ -48,88 +48,78 @@ Halaman-halaman yang dapat diakses oleh semua pengunjung (anggota dan non-anggot
 
 ---
 
-## Setup Instructions
-
-### Prerequisites
-Make sure you have the following installed:
-- PHP >= 8.2  
-- Composer  
-- Node.js & NPM  
-- A local server environment (e.g., Herd, Laragon, XAMPP)  
-- MySQL or another compatible database  
-
 ### Installation
 
 1. **Clone the repository:**
 
-    ```bash
-    git clone [URL_REPOSITORY_ANDA]
-    cd [NAMA_FOLDER_PROYEK]
-    ```
+    ```bash
+    git clone [URL_REPOSITORY_ANDA]
+    cd [NAMA_FOLDER_PROYEK]
+    ```
 
 2. **Install PHP dependencies:**
 
-    ```bash
-    composer install
-    ```
+    ```bash
+    composer install
+    ```
 
 3. **Install Node.js dependencies:**
 
-    ```bash
-    npm install
-    ```
+    ```bash
+    npm install
+    ```
 
 4. **Copy the environment file:**
 
-    ```bash
-    cp .env.example .env
-    ```
+    ```bash
+    cp .env.example .env
+    ```
 
 5. **Generate application key:**
 
-    ```bash
-    php artisan key:generate
-    ```
+    ```bash
+    php artisan key:generate
+    ```
 
 6. **Configure your database:**
 
-    Open the `.env` file and update the database connection details:
-    ```env
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=db_gereja
-    DB_USERNAME=root
-    DB_PASSWORD=
-    ```
+    Open the `.env` file and update the database connection details:
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=db_gereja
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
 7. **Run database migrations and seeders:**
 
-    ```bash
-    php artisan migrate:fresh --seed
-    ```
+    ```bash
+    php artisan migrate:fresh --seed
+    ```
 
 8. **Compile frontend assets:**
 
-    ```bash
-    npm run dev
-    ```
+    ```bash
+    npm run dev
+    ```
 
 9. **Start the development server:**
 
-    ```bash
-    php artisan serve
-    ```
+    ```bash
+    php artisan serve
+    ```
 
-    The application will be available at `http://127.0.0.1:8000`.
+    The application will be available at `http://127.0.0.1:8000`.
 
 
 # Technology Stack
 
-- **Backend**: Laravel 12  
-- **Frontend**: Laravel Blade, Tailwind CSS, Alpine.js, Swiper.js  
-- **Database**: MySQL  
-- **Development Environment**: Herd  
+- **Backend**: Laravel 12  
+- **Frontend**: Laravel Blade, Tailwind CSS, Alpine.js, Swiper.js  
+- **Database**: MySQL  
+- **Development Environment**: Herd  
 
 ## Contributing
 
