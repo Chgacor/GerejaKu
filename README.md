@@ -38,12 +38,12 @@ Halaman-halaman yang dapat diakses oleh semua pengunjung (anggota dan non-anggot
 * **Role-Based Access**: Secure admin area accessible only to users with an `admin` role.
 * **Jemaat (Member) Management**: Full CRUD functionality for church member data, complete with search and filtering.
 * **Content Management**: Admins can manage all dynamic content, including:
-  * Homepage Slideshow (CRUD, ordering, and status toggle).
-  * Devotionals (CRUD with image uploads).
-  * Upcoming Services (CRUD with image uploads and interactive forms).
-  * Pastor Profiles (CRUD with photo uploads).
-  * Berita (CRUD)
-  * Jadwal (CRUD)
+  * **Homepage Slideshow** (CRUD, ordering, and status toggle).
+  * **Devotionals** (CRUD with image uploads).
+  * **Upcoming Services** (CRUD with image uploads and interactive forms).
+  * **Pastor Profiles** (CRUD with photo uploads).
+  * **Berita** (CRUD)
+  * **Jadwal** (CRUD)
 * **Website Settings**: A central page to update static content like the About Us page and the weekly bible verse.
 
 ---
