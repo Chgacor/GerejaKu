@@ -5,7 +5,7 @@ This is a comprehensive web application designed to serve as a community portal 
 
 ---
 
-## 🌟 Fitur Utama (Core Functionality)
+## Fitur Utama (Core Functionality)
 Aplikasi ini berfungsi sebagai **portal informasi gereja** yang komprehensif. Fitur utamanya adalah menyediakan:
 * **Informasi dan Berita Gereja**: Menampilkan berita terkini, pengumuman resmi, dan laporan kegiatan dari berbagai komisi.
 * **Jadwal Kegiatan**: Menyediakan jadwal ibadah (Minggu), komisi, dan acara khusus lainnya.
@@ -51,7 +51,7 @@ Admins dapat mengelola semua konten dinamis yang ditampilkan di website publik:
 * **Berita (News)**: CRUD untuk informasi dan pengumuman gereja.
 * **Jadwal**: CRUD untuk mengatur jadwal ibadah mingguan, komisi, dan kegiatan khusus.
 
-#### ⚙️ Pengaturan Website (Global Settings)
+#### Pengaturan Website (Global Settings)
 * **Website Settings**: Halaman terpusat untuk memperbarui konten statis seperti halaman *About Us* (Sejarah, Visi, Misi) dan Ayat Alkitab Mingguan (*Weekly Bible Verse*).
 
 ---
