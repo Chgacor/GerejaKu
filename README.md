@@ -34,17 +34,25 @@ Halaman-halaman yang dapat diakses oleh semua pengunjung (anggota dan non-anggot
 * **Notifikasi (Ikon Lonceng)**: Ikon notifikasi digunakan untuk memberi tahu update berita baru, informasi terkait akun pengguna, dan pengumuman penting.
 * **Akun/Profil Pengguna**: Menunjukkan pengguna yang sedang *login*. Berisi menu *profil* (untuk melihat dan mengubah data), pengaturan akun, dan *logout*.
 
-### Admin Panel
-* **Role-Based Access**: Secure admin area accessible only to users with an `admin` role.
-* **Jemaat (Member) Management**: Full CRUD functionality for church member data, complete with search and filtering.
-* **Content Management**: Admins can manage all dynamic content, including:
-  * **Homepage Slideshow** (CRUD, ordering, and status toggle).
-  * **Devotionals** (CRUD with image uploads).
-  * **Upcoming Services** (CRUD with image uploads and interactive forms).
-  * **Pastor Profiles** (CRUD with photo uploads).
-  * **Berita** (CRUD)
-  * **Jadwal** (CRUD)
-* **Website Settings**: A central page to update static content like the About Us page and the weekly bible verse.
+### 🔑 Admin Panel (Panel Administrator)
+
+Panel administrasi yang aman, hanya dapat diakses oleh pengguna dengan peran (`role`) `admin`.
+
+#### 👤 Manajemen Pengguna (Jemaat)
+* **Jemaat (Member) Management**: Fungsionalitas **CRUD** (Create, Read, Update, Delete) lengkap untuk data anggota gereja, dilengkapi dengan fitur pencarian dan penyaringan (*filtering*).
+
+#### 📝 Manajemen Konten Dinamis
+Admins dapat mengelola semua konten dinamis yang ditampilkan di website publik:
+
+* **Homepage Slideshow**: CRUD, pengaturan urutan (*ordering*), dan *toggle* status tayang.
+* **Devotionals (Renungan)**: CRUD, termasuk fitur unggah gambar (*image uploads*).
+* **Upcoming Services (Jadwal Acara)**: CRUD, termasuk unggah gambar dan formulir interaktif terkait layanan.
+* **Pastor Profiles (Profil Pendeta)**: CRUD, termasuk unggah foto.
+* **Berita (News)**: CRUD untuk informasi dan pengumuman gereja.
+* **Jadwal**: CRUD untuk mengatur jadwal ibadah mingguan, komisi, dan kegiatan khusus.
+
+#### ⚙️ Pengaturan Website (Global Settings)
+* **Website Settings**: Halaman terpusat untuk memperbarui konten statis seperti halaman *About Us* (Sejarah, Visi, Misi) dan Ayat Alkitab Mingguan (*Weekly Bible Verse*).
 
 ---
 
