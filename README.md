@@ -34,14 +34,14 @@ Halaman-halaman yang dapat diakses oleh semua pengunjung (anggota dan non-anggot
 * **Notifikasi (Ikon Lonceng)**: Ikon notifikasi digunakan untuk memberi tahu update berita baru, informasi terkait akun pengguna, dan pengumuman penting.
 * **Akun/Profil Pengguna**: Menunjukkan pengguna yang sedang *login*. Berisi menu *profil* (untuk melihat dan mengubah data), pengaturan akun, dan *logout*.
 
-### 🔑 Admin Panel (Panel Administrator)
+### Admin Panel (Panel Administrator)
 
 Panel administrasi yang aman, hanya dapat diakses oleh pengguna dengan peran (`role`) `admin`.
 
-#### 👤 Manajemen Pengguna (Jemaat)
+#### Manajemen Pengguna (Jemaat)
 * **Jemaat (Member) Management**: Fungsionalitas **CRUD** (Create, Read, Update, Delete) lengkap untuk data anggota gereja, dilengkapi dengan fitur pencarian dan penyaringan (*filtering*).
 
-#### 📝 Manajemen Konten Dinamis
+#### Manajemen Konten Dinamis
 Admins dapat mengelola semua konten dinamis yang ditampilkan di website publik:
 
 * **Homepage Slideshow**: CRUD, pengaturan urutan (*ordering*), dan *toggle* status tayang.
