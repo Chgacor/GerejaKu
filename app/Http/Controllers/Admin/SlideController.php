@@ -16,11 +16,8 @@ class SlideController extends Controller
 
     public function create()
     {
-        $nextOrder = (Slide::max('order') ?? -1) + 1;
-
-        $slide = new Slide(['order' => $nextOrder]);
-
-        return view('admin.slides.create', compact('slide'));
+        // Kita tidak perlu mengirim $nextOrder ke view karena akan diset otomatis saat store
+        return view('admin.slides.create', ['slide' => new Slide()]);
     }
 
     public function store(Request $request)
@@ -30,12 +27,15 @@ class SlideController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'link_url' => 'nullable|url',
-            'order' => 'required|integer',
+            // 'order' dihapus dari validasi karena otomatis
             'is_active' => 'sometimes|boolean',
         ]);
 
         $data = $request->except('image');
         $data['is_active'] = $request->has('is_active');
+
+        // LOGIKA OTOMATIS URUTAN: Ambil urutan tertinggi saat ini + 1
+        $data['order'] = (Slide::max('order') ?? 0) + 1;
 
         $path = $request->file('image')->store('slides', 'public');
         $data['image'] = $path;
@@ -57,7 +57,7 @@ class SlideController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'link_url' => 'nullable|url',
-            'order' => 'required|integer',
+            'order' => 'required|integer', // Di update, user mungkin ingin mengubah urutan manual, jadi biarkan
             'is_active' => 'sometimes|boolean',
         ]);
 

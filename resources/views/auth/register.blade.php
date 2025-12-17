@@ -5,7 +5,6 @@
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6">Register Akun Baru</h1>
 
-            {{-- Menampilkan error validasi jika ada --}}
             @if ($errors->any())
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
                     <ul class="list-disc list-inside">
@@ -19,13 +18,13 @@
             <form method="POST" action="{{ route('register.post') }}">
                 @csrf
                 <div class="space-y-4">
-                    {{-- Nama Lengkap --}}
+                    {{-- Ganti nama_lengkap menjadi full_name --}}
                     <div>
-                        <label for="nama_lengkap" class="block font-medium text-gray-700">Nama Lengkap</label>
-                        <input type="text" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap') }}" class="w-full mt-1 p-3 border rounded-lg" required autofocus>
+                        <label for="full_name" class="block font-medium text-gray-700">Nama Lengkap</label>
+                        <input type="text" id="full_name" name="full_name" value="{{ old('full_name') }}" class="w-full mt-1 p-3 border rounded-lg" required autofocus>
                     </div>
 
-                    {{-- Username (Field Baru) --}}
+                    {{-- Username --}}
                     <div>
                         <label for="username" class="block font-medium text-gray-700">Username</label>
                         <input type="text" id="username" name="username" value="{{ old('username') }}" class="w-full mt-1 p-3 border rounded-lg" required>

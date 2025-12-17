@@ -4,59 +4,57 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jemaat;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Menampilkan form registrasi.
-     */
     public function showRegisterForm()
     {
         return view('auth.register');
     }
 
-    /**
-     * Memproses registrasi user baru.
-     */
     public function register(Request $request)
     {
-        // 1. VALIDASI DIPERBARUI: Menambahkan validasi untuk 'username'.
-        // Aturan 'alpha_dash' memastikan username hanya berisi huruf, angka, strip (-), dan underscore (_).
+        // 1. Validasi
         $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:jemaats|alpha_dash',
-            'email' => 'required|string|email|max:255|unique:jemaats',
-            'password' => 'required|string|min:8|confirmed',
+            // Ubah nama_lengkap jadi full_name agar sesuai form view
+            'full_name' => 'required|string|max:255',
+            'username'  => 'required|string|max:255|unique:users,name|alpha_dash',
+            'email'     => 'required|string|email|max:255|unique:users,email',
+            'password'  => 'required|string|min:8|confirmed',
         ]);
 
-        // 2. PROSES CREATE DIPERBARUI: Secara eksplisit membuat user dengan data yang benar.
-        // Ini lebih aman dan jelas daripada menggunakan $request->all().
-        $jemaat = Jemaat::create([
-            'nama_lengkap' => $request->nama_lengkap,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => $request->password, // Password akan di-hash otomatis oleh Model Jemaat
-        ]);
+        DB::transaction(function () use ($request) {
 
-        // 3. Login user yang baru dibuat
-        Auth::login($jemaat);
+            // A. Buat Akun Login (Users)
+            $user = User::create([
+                'name'     => $request->username,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+                'role'     => 'user',
+            ]);
 
-        return redirect('/');
+            // B. Buat Profil (Jemaats) dengan nama kolom bahasa Inggris
+            Jemaat::create([
+                'user_id'   => $user->id,
+                'full_name' => $request->full_name, // Mapping ke kolom full_name
+            ]);
+
+            Auth::login($user);
+        });
+
+        return redirect('/')->with('success', 'Registrasi berhasil!');
     }
 
-    /**
-     * Menampilkan form login.
-     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Memproses upaya login.
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -64,9 +62,8 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        // Kredensial login sudah benar menggunakan 'username'.
         $credentials = [
-            'username' => $request->username,
+            'name'     => $request->username,
             'password' => $request->password
         ];
 
@@ -74,7 +71,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/admin/jemaat');
+                return redirect()->intended('/admin');
             }
 
             return redirect()->intended('/');
@@ -85,9 +82,6 @@ class AuthController extends Controller
         ])->onlyInput('username');
     }
 
-    /**
-     * Memproses logout.
-     */
     public function logout(Request $request)
     {
         Auth::logout();
@@ -96,4 +90,3 @@ class AuthController extends Controller
         return redirect('/');
     }
 }
-

@@ -5,41 +5,38 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 
-// Pastikan class ini extends Authenticatable
-class Jemaat extends Authenticatable
+class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Atribut yang bisa diisi massal.
+     * Kita gunakan kolom 'name' untuk menyimpan 'username'.
      */
     protected $fillable = [
-        'nama_lengkap',
-        'username', // <-- INI YANG PALING PENTING
+        'name',     // Ini akan menyimpan data 'username'
         'email',
         'password',
+        'role',     // Pastikan kolom ini ada di tabel users, atau hapus jika tidak pakai role
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Secara otomatis mengenkripsi (hash) password saat disimpan.
-     */
-    public function setPasswordAttribute($value)
+    protected function casts(): array
     {
-        $this->attributes['password'] = Hash::make($value);
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    // Relasi ke tabel profil Jemaat
+    public function jemaat()
+    {
+        return $this->hasOne(Jemaat::class);
     }
 }
-
