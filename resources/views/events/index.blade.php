@@ -8,7 +8,9 @@
             <div id='calendar' class="text-sm md:text-base"></div>
         </div>
     </div>
-    <div id="event-modal" class="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
+
+    {{-- PERBAIKAN: backdrop-blur-sm dihapus, diganti bg-black agar background gelap transparan --}}
+    <div id="event-modal" class="fixed inset-0 bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
         <div id="modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-lg transform scale-95 transition-transform duration-300">
             <div class="p-6">
                 <div class="flex justify-between items-start">
@@ -47,10 +49,15 @@
                 modalContent.classList.add('scale-95');
             };
 
-            // Event listener untuk tombol close (tetap ada)
+            // Event listener untuk tombol close
             modalCloseBtn.addEventListener('click', closeModal);
 
-            // Event listener untuk klik di background (SUDAH DIHAPUS)
+            // Opsional: Tutup modal jika klik di luar area konten (background gelap)
+            eventModal.addEventListener('click', function(e) {
+                if (e.target === eventModal) {
+                    closeModal();
+                }
+            });
 
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -68,8 +75,13 @@
 
                     modalTitle.textContent = info.event.title;
                     const startTime = new Date(info.event.start).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
-                    const endTime = new Date(info.event.end).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
-                    modalTime.textContent = `${startTime} - ${endTime}`;
+                    // Handle jika end time null (acara seharian/satu waktu)
+                    let endTime = '';
+                    if (info.event.end) {
+                        endTime = ' - ' + new Date(info.event.end).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
+                    }
+
+                    modalTime.textContent = `${startTime}${endTime}`;
                     modalDescription.innerHTML = info.event.extendedProps.description ? info.event.extendedProps.description.replace(/\n/g, '<br>') : 'Tidak ada deskripsi.';
 
                     openModal();
@@ -80,4 +92,3 @@
         });
     </script>
 @endpush
-

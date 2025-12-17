@@ -29,16 +29,28 @@ class CommissionArticleController extends Controller
     }
 
     public function store(Request $request, Commission $commission = null) {
-        $validatedData = $request->validate([
+        // Definisikan aturan validasi dasar
+        $rules = [
             'title' => 'required|string|max:255',
-            'commission_id' => 'required_without:commission|nullable|exists:commissions,id',
             'category' => 'required|string|max:100',
             'content' => 'required|string',
             'cover_image' => 'nullable|image|max:2048',
             'published_at' => 'nullable|date',
-        ]);
+        ];
 
-        if ($commission) $validatedData['commission_id'] = $commission->id;
+        // LOGIKA PERBAIKAN:
+        // Jika $commission (Route Parameter) TIDAK ADA (misal: buat dari menu Admin Global),
+        // maka user WAJIB memilih commission_id dari dropdown.
+        if (!$commission) {
+            $rules['commission_id'] = 'required|exists:commissions,id';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        // Jika $commission ADA (Route Nested), paksa commission_id sesuai parameter route
+        if ($commission) {
+            $validatedData['commission_id'] = $commission->id;
+        }
 
         if ($request->hasFile('cover_image')) {
             $validatedData['cover_image'] = $request->file('cover_image')->store('articles', 'public');
@@ -63,7 +75,8 @@ class CommissionArticleController extends Controller
 
     public function edit(CommissionArticle $article) {
         $commissions = Commission::orderBy('name')->get();
-        $commission = null;
+        // Jika artikel milik komisi, kita bisa ambil komisinya, atau biarkan null untuk mode edit global
+        $commission = $article->commission;
         return view('admin.articles.edit', compact('article', 'commission', 'commissions'));
     }
 
@@ -90,9 +103,6 @@ class CommissionArticleController extends Controller
         }
 
         $article->update($validatedData);
-
-        // Opsional: Notifikasi update (dimatikan agar tidak spam)
-        // try { $this->sendPublicationNotification($article, 'Berita Diperbarui: '); } catch (\Exception $e) {}
 
         return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil diperbarui.');
     }
@@ -130,7 +140,7 @@ class CommissionArticleController extends Controller
         $title = $titlePrefix . Str::limit($article->title, 30);
         $body = 'Artikel "' . Str::limit($article->title, 40) . '..." telah dipublikasikan.';
 
-        // Pastikan Model CommissionArticle sudah punya getRouteKeyName()
+        // Menggunakan helper route() dengan objek article akan otomatis menggunakan getRouteKeyName() (biasanya ID atau Slug)
         $url = route('articles.show', $article);
 
         Notification::send($subscribers, new NewContentNotification($title, $body, $url, 'berita'));

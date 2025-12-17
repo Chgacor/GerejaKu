@@ -97,12 +97,17 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('pastors', AdminPastorController::class);
     Route::resource('events', AdminEventController::class);
     Route::resource('commissions', AdminCommissionController::class);
-    Route::get('/articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('articles.show');
-    Route::resource('commissions.articles', AdminCommissionArticleController::class)->shallow()->except(['show']);
 
-    Route::get('articles', [AdminCommissionArticleController::class, 'index'])->name('articles.index');
     Route::get('articles/create', [AdminCommissionArticleController::class, 'create'])->name('articles.create');
     Route::post('articles', [AdminCommissionArticleController::class, 'store'])->name('articles.store');
+    Route::get('articles', [AdminCommissionArticleController::class, 'index'])->name('articles.index');
+
+    Route::resource('commissions.articles', AdminCommissionArticleController::class)->shallow()->except(['show']);
+
+    Route::get('/articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('articles.show');
+
+
+
 
     Route::resource('qna', AdminQnaController::class)->except(['create', 'store', 'show']);
 });

@@ -65,27 +65,38 @@ class HomeController extends Controller
     public function storeQna(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
             'subject' => 'required|string|max:255',
             'question' => 'required|string',
         ]);
 
-        $qna = Qna::create($validatedData);
+        $user = Auth::user();
 
-        $admins = Jemaat::where('role', 'admin')->get();
+        $jemaat = $user->jemaat;
+        $userPhone = $jemaat ? $jemaat->no_hp : null;
 
-        Notification::send($admins, new NewQuestionSubmitted($qna));
+        // 4. Simpan ke Database
+        $qna = Qna::create([
+            'user_id'  => $user->id,
+            'name'     => $user->name,
+            'email'    => $user->email,
+            'phone'    => $userPhone,
+            'subject'  => $validatedData['subject'],
+            'question' => $validatedData['question'],
+        ]);
 
-        return redirect()->back()->with('success_qna', 'Pertanyaan Anda telah terkirim!');
+        $admins = User::where('role', 'admin')->get();
+
+        if ($admins->count() > 0) {
+            Notification::send($admins, new NewQuestionSubmitted($qna));
+        }
+
+        return redirect()->back()->with('success_qna', 'Pertanyaan Anda telah terkirim! Admin akan membalas secepatnya.');
     }
 
-    /**
-     * Menampilkan halaman arsip Q&A (baru).
-     */
     public function showQnaArchive(Request $request)
     {
         $allQna = Qna::where('is_published', true)
+            ->whereNotNull('answer')
             ->latest('answered_at')
             ->paginate(10);
 

@@ -10,8 +10,10 @@ class Qna extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
         'email',
+        'phone',
         'subject',
         'question',
         'answer',
@@ -26,10 +28,19 @@ class Qna extends Model
     ];
 
     /**
-     * Relasi ke user (Jemaat) yang menjawab.
+     * Relasi ke User (Penanya)
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke Admin yang menjawab (PENTING: Gunakan User::class)
+     * Karena auth()->id() menyimpan ID dari tabel users.
      */
     public function answerer()
     {
-        return $this->belongsTo(Jemaat::class, 'answered_by');
+        return $this->belongsTo(User::class, 'answered_by');
     }
 }

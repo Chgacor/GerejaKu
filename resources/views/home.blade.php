@@ -137,19 +137,39 @@
 
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Punya Pertanyaan?</h2>
+
                     @if (session('success_qna'))
-                        <div class="bg-green-100 text-green-700 p-4 mb-4 rounded">
+                        <div class="bg-green-100 text-green-700 p-4 mb-4 rounded border-l-4 border-green-500">
                             {{ session('success_qna') }}
                         </div>
                     @endif
-                    <form action="{{ route('qna.store') }}" method="POST" class="space-y-4">
-                        @csrf
-                        <input type="text" name="name" placeholder="Nama Anda" class="w-full p-2 border rounded-lg" required>
-                        <input type="email" name="email" placeholder="Alamat Email" class="w-full p-2 border rounded-lg" required>
-                        <input type="text" name="subject" placeholder="Subjek" class="w-full p-2 border rounded-lg" required>
-                        <textarea name="question" rows="5" placeholder="Tulis pertanyaan Anda di sini..." class="w-full p-2 border rounded-lg" required></textarea>
-                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg">Kirim Pertanyaan</button>
-                    </form>
+
+                    {{-- CEK LOGIN --}}
+                    @auth
+                        <form action="{{ route('qna.store') }}" method="POST" class="space-y-4">
+                            @csrf
+
+                            {{-- Info User Otomatis (Hanya Teks, Bukan Input) --}}
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-200 mb-4 text-sm text-blue-800">
+                                <p>Bertanya sebagai: <strong>{{ Auth::user()->name }}</strong></p>
+                            </div>
+
+                            <input type="text" name="subject" placeholder="Subjek Pertanyaan" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+
+                            <textarea name="question" rows="5" placeholder="Tulis pertanyaan Anda di sini..." class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required></textarea>
+
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Kirim Pertanyaan
+                            </button>
+                        </form>
+                    @else
+                        <div class="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                            <p class="text-gray-600 mb-4">Silakan login terlebih dahulu untuk mengajukan pertanyaan kepada Admin/Gembala.</p>
+                            <a href="{{ route('login') }}" class="inline-block bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition">
+                                Login Sekarang
+                            </a>
+                        </div>
+                    @endauth
                 </div>
 
                 <div>
