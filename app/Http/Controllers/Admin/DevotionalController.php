@@ -3,7 +3,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Devotional;
+use App\Models\User; // Tambahkan ini
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 
 class DevotionalController extends Controller
 {
@@ -22,7 +25,7 @@ class DevotionalController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi gambar
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'scripture_reference' => 'required|string|max:255',
             'content' => 'required|string',
         ]);
@@ -36,9 +39,13 @@ class DevotionalController extends Controller
 
         $devotional = Devotional::create($data);
 
-        $jemaats = \App\Models\Jemaat::all();
-        \Illuminate\Support\Facades\Notification::send(
-            $jemaats,
+        // PERBAIKAN DI SINI:
+        // Kirim notifikasi ke User (yang punya trait Notifiable), bukan ke Jemaat.
+        // Kita ambil semua User yang memiliki data profil Jemaat.
+        $users = User::whereHas('jemaat')->get();
+
+        Notification::send(
+            $users,
             new \App\Notifications\NewContentNotification(
                 'Renungan Baru: ' . $devotional->title,
                 'Renungan terbaru telah ditambahkan: ' . $devotional->title . '. Baca sekarang!',
@@ -59,7 +66,7 @@ class DevotionalController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi gambar
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'scripture_reference' => 'required|string|max:255',
             'content' => 'required|string',
         ]);
@@ -67,9 +74,8 @@ class DevotionalController extends Controller
         $data = $request->all();
 
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
-            if ($devotional->image && file_exists(storage_path('app/public/' . $devotional->image))) {
-                \Storage::delete('public/' . $devotional->image);
+            if ($devotional->image && Storage::exists('public/' . $devotional->image)) {
+                Storage::delete('public/' . $devotional->image);
             }
             $path = $request->file('image')->store('devotionals', 'public');
             $data['image'] = $path;
@@ -82,7 +88,10 @@ class DevotionalController extends Controller
 
     public function destroy(Devotional $devotional)
     {
+        if ($devotional->image && Storage::exists('public/' . $devotional->image)) {
+            Storage::delete('public/' . $devotional->image);
+        }
         $devotional->delete();
-        return redirect()->route('devotionals.index')->with('success', 'Renungan berhasil dihapus.');
+        return redirect()->route('admin.devotionals.index')->with('success', 'Renungan berhasil dihapus.');
     }
 }

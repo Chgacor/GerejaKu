@@ -10,15 +10,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Atribut yang bisa diisi massal.
-     * Kita gunakan kolom 'name' untuk menyimpan 'username'.
-     */
     protected $fillable = [
-        'name',     // Ini akan menyimpan data 'username'
+        'name',
         'email',
         'password',
-        'role',     // Pastikan kolom ini ada di tabel users, atau hapus jika tidak pakai role
+        'role',
     ];
 
     protected $hidden = [
@@ -34,7 +30,7 @@ class User extends Authenticatable
         ];
     }
 
-    // Relasi ke tabel profil Jemaat
+    // Relasi ke Data Profil (Jemaat)
     public function jemaat()
     {
         return $this->hasOne(Jemaat::class);

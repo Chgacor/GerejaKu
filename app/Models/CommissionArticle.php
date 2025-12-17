@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/CommissionArticle.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,11 +20,17 @@ class CommissionArticle extends Model
         'published_at',
     ];
 
-    /**
-     * Relasi ke komisi pemilik artikel.
-     */
     public function commission()
     {
         return $this->belongsTo(Commission::class);
+    }
+
+    // === TAMBAHKAN INI ===
+    /**
+     * Beritahu Laravel untuk mencari data berdasarkan SLUG, bukan ID.
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CommissionArticle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -12,10 +13,10 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = CommissionArticle::with('commission') // Ambil juga data komisinya
-        ->whereNotNull('published_at')
+        $articles = CommissionArticle::with('commission')
+            ->whereNotNull('published_at')
             ->latest('published_at')
-            ->paginate(12); // Tampilkan 12 artikel per halaman
+            ->paginate(12);
 
         return view('articles.index', compact('articles'));
     }
@@ -25,11 +26,14 @@ class ArticleController extends Controller
      */
     public function show(CommissionArticle $article)
     {
-        // Pastikan artikel sudah dipublikasikan sebelum ditampilkan
-        if (!$article->published_at) {
-            abort(404);
+
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            if (!$article->published_at) {
+                abort(404);
+            }
         }
 
+        // Jika admin, lewati pengecekan di atas (bisa lihat draft)
         return view('articles.show', compact('article'));
     }
 }

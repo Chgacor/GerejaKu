@@ -22,6 +22,5 @@
         <div class="mt-8 border-t pt-4">
             <a href="{{ route('devotionals.index') }}" class="text-blue-500 hover:underline">&larr; Kembali ke Daftar Renungan</a>
         </div>
-        Sigma
     </div>
 @endsection

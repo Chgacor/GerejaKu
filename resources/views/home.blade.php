@@ -2,30 +2,43 @@
 
 @section('content')
     @if($slides->isNotEmpty())
-        <div class="swiper hero-swiper h-96">
-            <div class="swiper-wrapper">
-                @foreach ($slides as $slide)
-                    <div class="swiper-slide relative bg-gray-800 text-white overflow-hidden">
-                        <img src="{{ asset('storage/' . $slide->image) }}" class="w-full h-full object-cover opacity-50">
-                        <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center p-8">
-                            <div class="text-center">
-                                <h1 class="text-4xl md:text-6xl font-bold drop-shadow-md">{{ $slide->title }}</h1>
-                                @if($slide->subtitle)
-                                    <p class="mt-4 text-lg md:text-xl drop-shadow-sm">{{ $slide->subtitle }}</p>
-                                @endif
-                                @if($slide->link_url)
-                                    <a href="{{ $slide->link_url }}" class="mt-8 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded shadow-lg">
-                                        Selengkapnya
-                                    </a>
-                                @endif
+        {{-- WRAPPER LUAR: Membatasi lebar agar tidak full-screen (max-w-5xl) dan posisinya di tengah (mx-auto) --}}
+        <div class="max-w-5xl mx-auto px-4 pt-8">
+
+            {{-- SLIDER: Aspect Ratio 16:9, Rounded Corners, Shadow --}}
+            <div class="swiper hero-swiper w-full aspect-video rounded-2xl shadow-2xl overflow-hidden relative group">
+                <div class="swiper-wrapper">
+                    @foreach ($slides as $slide)
+                        <div class="swiper-slide relative bg-black text-white">
+                            {{-- Gambar --}}
+                            <img src="{{ asset('storage/' . $slide->image) }}" class="w-full h-full object-cover opacity-60 transition-transform duration-700 hover:scale-105">
+
+                            {{-- Konten Teks: Posisi di bawah kiri (standar thumbnail video) --}}
+                            <div class="absolute inset-0 flex items-end justify-start p-6 md:p-10 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                <div class="w-full text-left">
+                                    <h1 class="text-xl md:text-3xl lg:text-4xl font-bold drop-shadow-md leading-tight mb-2">{{ $slide->title }}</h1>
+                                    @if($slide->subtitle)
+                                        <p class="text-sm md:text-base text-gray-200 line-clamp-2">{{ $slide->subtitle }}</p>
+                                    @endif
+                                    @if($slide->link_url)
+                                        <a href="{{ $slide->link_url }}" class="mt-4 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs md:text-sm font-bold py-2 px-4 rounded-lg transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                                            </svg>
+                                            Lihat Selengkapnya
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
+
+                {{-- Navigasi Slider --}}
+                <div class="swiper-pagination hero-pagination !bottom-4 !right-4 !left-auto !w-auto"></div>
+                <div class="swiper-button-prev hero-button-prev !w-8 !h-8 !bg-black/50 !rounded-full !text-white/80 hover:!bg-black/80 !text-xs after:!text-xs backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="swiper-button-next hero-button-next !w-8 !h-8 !bg-black/50 !rounded-full !text-white/80 hover:!bg-black/80 !text-xs after:!text-xs backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
-            <div class="swiper-pagination hero-pagination"></div>
-            <div class="swiper-button-prev hero-button-prev"></div>
-            <div class="swiper-button-next hero-button-next"></div>
         </div>
     @endif
 

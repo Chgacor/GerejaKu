@@ -6,17 +6,19 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">
                     {{-- Judul dinamis (INI BAGIAN YANG DIPERBAIKI) --}}
-                    @if($commission)
-                        Manajemen Artikel untuk: <span class="text-blue-600">{{ $commission->name }}</span>
-                    @else
-                        Manajemen Semua Artikel
-                    @endif
+                    <h1 class="text-2xl font-bold mb-4">
+                        @if(isset($commission) && $commission)
+                            Artikel Komisi: {{ $commission->name }}
+                        @else
+                            Semua Artikel Komisi
+                        @endif
+                    </h1>
                 </h1>
             </div>
 
             {{-- Tombol juga dinamis --}}
             @if($commission)
-                <a href="{{ route('admin.commissions.articles.create', $commission) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                <a href="{{ route('admin.articles.create', isset($commission) ? $commission->id : null) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
                     Tulis Artikel Baru
                 </a>
             @else

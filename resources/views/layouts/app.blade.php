@@ -186,11 +186,13 @@
                         {{-- Tombol Profil Pengguna --}}
                         <div class="relative">
                             <button data-toggle-button data-toggle-target="#profile-menu" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                @if (Auth::user()->foto_profil)
-                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ Auth::user()->nama_lengkap }}">
+                                @if (Auth::user()->jemaat && Auth::user()->jemaat->profile_picture)
+                                    <img class="h-8 w-8 rounded-full object-cover"
+                                         src="{{ asset('storage/' . Auth::user()->jemaat->profile_picture) }}"
+                                         alt="{{ Auth::user()->jemaat->full_name }}">
                                 @else
                                     <div class="h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
-                                        {{ Str::substr(Auth::user()->nama_lengkap, 0, 1) }}
+                                        {{ Str::upper(Str::substr(Auth::user()->jemaat->full_name ?? Auth::user()->name, 0, 1)) }}
                                     </div>
                                 @endif
                             </button>

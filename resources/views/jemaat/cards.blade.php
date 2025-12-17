@@ -11,40 +11,64 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @forelse($jemaats as $jemaat)
-            <div
-                class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300">
                 <div class="p-6">
                     <div class="flex items-center space-x-4">
-                        @if (Auth::user()->foto_profil)
-                            <img class="h-8 w-8 rounded-full object-cover"
-                                 src="{{ asset('storage/' . Auth::user()->foto_profil) }}"
-                                 alt="{{ Auth::user()->nama_lengkap }}">
+                        {{-- PERBAIKAN: Gunakan variabel $jemaat dan nama kolom baru (profile_picture) --}}
+                        @if ($jemaat->profile_picture)
+                            <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200"
+                                 src="{{ asset('storage/' . $jemaat->profile_picture) }}"
+                                 alt="{{ $jemaat->full_name }}">
                         @else
-                            <div
-                                class="h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
-                                {{ Str::substr(Auth::user()->nama_lengkap, 0, 1) }}
+                            {{-- Fallback: Tampilkan inisial dari nama jemaat --}}
+                            <div class="h-12 w-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-lg">
+                                {{ Str::upper(Str::substr($jemaat->full_name, 0, 1)) }}
                             </div>
                         @endif
-                        <div>
-                            <h2 class="text-xl font-bold text-gray-900">{{ $jemaat->nama_lengkap }}</h2>
-                            <p class="text-sm text-gray-600">{{ $jemaat->no_telepon }}</p>
+
+                        <div class="flex-1 min-w-0">
+                            {{-- PERBAIKAN: Gunakan full_name dan phone_number --}}
+                            <h2 class="text-lg font-bold text-gray-900 truncate" title="{{ $jemaat->full_name }}">
+                                {{ $jemaat->full_name }}
+                            </h2>
+                            <p class="text-sm text-gray-600 truncate">{{ $jemaat->phone_number }}</p>
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <p class="text-gray-700"><span class="font-semibold">Lahir:</span> {{ $jemaat->tempat_lahir }}
-                            , {{ \Carbon\Carbon::parse($jemaat->tanggal_lahir)->format('d M Y') }}</p>
-                        <p class="text-gray-700"><span class="font-semibold">Alamat:</span> {{ $jemaat->alamat }}</p>
+
+                    <div class="mt-4 space-y-2">
+                        <p class="text-gray-700 text-sm">
+                            <span class="font-semibold text-gray-900">Lahir:</span>
+                            {{-- PERBAIKAN: Gunakan birth_place dan birth_date --}}
+                            {{ $jemaat->birth_place }}, {{ \Carbon\Carbon::parse($jemaat->birth_date)->isoFormat('D MMM Y') }}
+                        </p>
+                        <p class="text-gray-700 text-sm line-clamp-2" title="{{ $jemaat->address }}">
+                            <span class="font-semibold text-gray-900">Alamat:</span>
+                            {{-- PERBAIKAN: Gunakan address --}}
+                            {{ $jemaat->address }}
+                        </p>
                     </div>
-                    <div class="mt-6 flex justify-end">
+
+                    <div class="mt-6 flex justify-end space-x-2">
+                        <a href="{{ route('admin.jemaat.show', $jemaat->id) }}"
+                           class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+                            Detail
+                        </a>
                         <a href="{{ route('admin.jemaat.edit', $jemaat->id) }}"
-                           class="bg-black text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800">
-                            View/Edit
+                           class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition">
+                            Edit
                         </a>
                     </div>
                 </div>
             </div>
         @empty
-            <p class="col-span-3 text-center text-gray-500">Belum ada data jemaat.</p>
+            <div class="col-span-3 text-center py-10">
+                <p class="text-gray-500 text-lg">Belum ada data jemaat.</p>
+                <a href="{{ route('admin.jemaat.create') }}" class="text-blue-500 hover:underline mt-2 inline-block">Tambah Data Baru</a>
+            </div>
         @endforelse
+    </div>
+
+    <div class="mt-8">
+        {{ $jemaats->appends(request()->query())->links() }}
     </div>
 @endsection

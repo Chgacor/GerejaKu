@@ -5,40 +5,56 @@ This is a comprehensive web application designed to serve as a community portal 
 
 ---
 
-## Features
-
-### Public Website
-- **Homepage**: Dynamic hero slideshow and a carousel for upcoming services.
-- **User Authentication**: Members can register and log in to their accounts.
-- **Profile Completion**: New users are prompted to complete their profiles after registration.
-- **Devotionals**: A section for daily or weekly devotionals with images and text.
-- **About Us**: A multi-page section including:
-  - Church History, Vision, and Mission.
-  - Pastor Profiles.
-- **Service Information**: Detailed view for upcoming church services.
-- **Weekly Bible Verse**: Displayed in the footer.
-
-### Admin Panel
-- **Role-Based Access**: Secure admin area accessible only to users with an `admin` role.
-- **Jemaat (Member) Management**: Full CRUD functionality for church member data, complete with search and filtering.
-- **Content Management**: Admins can manage all dynamic content, including:
-  - Homepage Slideshow (CRUD, ordering, and status toggle).
-  - Devotionals (CRUD with image uploads).
-  - Upcoming Services (CRUD with image uploads and interactive forms).
-  - Pastor Profiles (CRUD with photo uploads).
-- **Website Settings**: A central page to update static content like the About Us page and the weekly bible verse.
+## Fitur Utama (Core Functionality)
+Aplikasi ini berfungsi sebagai **portal informasi gereja** yang komprehensif. Fitur utamanya adalah menyediakan:
+* **Informasi dan Berita Gereja**: Menampilkan berita terkini, pengumuman resmi, dan laporan kegiatan dari berbagai komisi.
+* **Jadwal Kegiatan**: Menyediakan jadwal ibadah (Minggu), komisi, dan acara khusus lainnya.
+* **Materi Spiritual**: Menyajikan materi Devosi, renungan harian/mingguan, ayat Alkitab, dan refleksinya.
+* **Informasi Institusi**: Memberikan informasi mendalam mengenai sejarah, visi, misi, dan struktur organisasi GKKD Serdam.
+* **Portal Komunitas**: Menyediakan fitur otentikasi, manajemen profil, dan notifikasi untuk anggota gereja (**Jemaat**).
 
 ---
 
-## Setup Instructions
+## Features
 
-### Prerequisites
-Make sure you have the following installed:
-- PHP >= 8.2  
-- Composer  
-- Node.js & NPM  
-- A local server environment (e.g., Herd, Laragon, XAMPP)  
-- MySQL or another compatible database  
+### Public Website
+Halaman-halaman yang dapat diakses oleh semua pengunjung (anggota dan non-anggota).
+
+* **Homepage** (Halaman Utama): Dynamic hero slideshow dan carousel untuk layanan/ibadah mendatang. Berisi sambutan dan *highlight* terbaru mengenai gereja atau kegiatan.
+* **User Authentication**: Members can register and log in to their accounts.
+* **Profile Completion**: New users are prompted to complete their profiles after registration.
+* **Berita**: Halaman untuk menampilkan informasi mengenai kegiatan gereja, pengumuman resmi, atau laporan kegiatan dari komisi-komisi.
+* **Jadwal**: Halaman yang digunakan untuk menampilkan dan mengelola jadwal ibadah Minggu, komisi, atau jadwal kegiatan khusus.
+* **Devotionals**: A section for daily or weekly devotionals with images and text. Menampilkan berbagai renungan harian atau mingguan, ayat Alkitab dan refleksinya.
+* **About Us** (Multi-page section):
+    * **Church History, Vision, and Mission** (Sejarah Gereja): Menampilkan penjelasan mengenai asal mula GKKD Serdam, tahun berdiri, serta visi dan misi gereja.
+    * **Pastor Profiles** (Profil GKKD): Menampilkan struktur organisasi gereja, pendeta, penatua, dan majelis.
+* **Service Information**: Detailed view for upcoming church services.
+* **Weekly Bible Verse**: Displayed in the footer.
+* **Notifikasi (Ikon Lonceng)**: Ikon notifikasi digunakan untuk memberi tahu update berita baru, informasi terkait akun pengguna, dan pengumuman penting.
+* **Akun/Profil Pengguna**: Menunjukkan pengguna yang sedang *login*. Berisi menu *profil* (untuk melihat dan mengubah data), pengaturan akun, dan *logout*.
+
+### Admin Panel (Panel Administrator)
+
+Panel administrasi yang aman, hanya dapat diakses oleh pengguna dengan peran (`role`) `admin`.
+
+#### Manajemen Pengguna (Jemaat)
+* **Jemaat (Member) Management**: Fungsionalitas **CRUD** (Create, Read, Update, Delete) lengkap untuk data anggota gereja, dilengkapi dengan fitur pencarian dan penyaringan (*filtering*).
+
+#### Manajemen Konten Dinamis
+Admins dapat mengelola semua konten dinamis yang ditampilkan di website publik:
+
+* **Homepage Slideshow**: CRUD, pengaturan urutan (*ordering*), dan *toggle* status tayang.
+* **Devotionals (Renungan)**: CRUD, termasuk fitur unggah gambar (*image uploads*).
+* **Upcoming Services (Jadwal Acara)**: CRUD, termasuk unggah gambar dan formulir interaktif terkait layanan.
+* **Pastor Profiles (Profil Pendeta)**: CRUD, termasuk unggah foto.
+* **Berita (News)**: CRUD untuk informasi dan pengumuman gereja.
+* **Jadwal**: CRUD untuk mengatur jadwal ibadah mingguan, komisi, dan kegiatan khusus.
+
+#### Pengaturan Website (Global Settings)
+* **Website Settings**: Halaman terpusat untuk memperbarui konten statis seperti halaman *About Us* (Sejarah, Visi, Misi) dan Ayat Alkitab Mingguan (*Weekly Bible Verse*).
+
+---
 
 ### Installation
 
