@@ -3,7 +3,6 @@
 @section('content')
     <div class="bg-gray-50">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-            {{-- Judul Halaman --}}
             <div class="text-center">
                 <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
                     Berita & Kegiatan Gereja

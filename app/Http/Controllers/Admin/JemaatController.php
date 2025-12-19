@@ -98,8 +98,10 @@ class JemaatController extends Controller
         return view('jemaat.show', compact('jemaat'));
     }
 
-    public function edit(Jemaat $jemaat)
+    public function edit($id)
     {
+        $jemaat = Jemaat::findOrFail($id);
+
         return view('jemaat.edit', compact('jemaat'));
     }
 
