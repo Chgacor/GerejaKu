@@ -15,8 +15,11 @@ class JemaatController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $kategori = $request->input('kategori');
+        $bulan = $request->input('bulan');
+        $tahun = $request->input('tahun');
 
-        // Filter: Ambil Jemaat yang User-nya BUKAN admin
+        // Query dasar
         $query = Jemaat::with('user')->whereHas('user', function ($q) {
             $q->where('role', '!=', 'admin');
         });
@@ -29,7 +32,16 @@ class JemaatController extends Controller
             });
         }
 
+        $query->filterByKategori($kategori);
+
+        $query->filterByBulan($bulan);
+
+        $query->filterByTahun($tahun);
+
         $jemaats = $query->latest()->paginate(10);
+
+        $jemaats->appends($request->all());
+
         return view('jemaat.index', compact('jemaats'));
     }
 
