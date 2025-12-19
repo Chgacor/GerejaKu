@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
 //=====================================
 // 3. RUTE KHUSUS ADMIN
 //=====================================
-Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'IsAdmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminJemaatController::class, 'index'])->name('dashboard');
 
     Route::resource('jemaat', AdminJemaatController::class);

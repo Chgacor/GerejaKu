@@ -13,6 +13,8 @@ use App\Models\Slide;
 use App\Notifications\NewQuestionSubmitted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Auth; 
+use App\Models\User;
 
 class HomeController extends Controller
 {
