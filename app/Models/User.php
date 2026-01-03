@@ -14,7 +14,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'is_active',
+        'password_reset_requested_at',
     ];
 
     protected $hidden = [
@@ -27,12 +28,18 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'password_reset_requested_at' => 'datetime',
         ];
     }
 
-    // Relasi ke Data Profil (Jemaat)
     public function jemaat()
     {
         return $this->hasOne(Jemaat::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }

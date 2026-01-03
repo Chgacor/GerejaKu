@@ -17,7 +17,7 @@
     $isAdminRoute = request()->routeIs('admin.*');
     $bodyClass = $isAdminRoute ? 'bg-gray-100' : 'bg-gray-50';
 
-    // Ambil data kontak dan ayat mingguan sekali saja di layout
+    // Ambil data kontak dan ayat mingguan sekali saja di layout (Hanya untuk publik)
     if (!$isAdminRoute) {
         try {
             $contactKeys = ['contact_phone', 'contact_instagram', 'contact_facebook', 'contact_youtube'];
@@ -36,53 +36,112 @@
     {{-- ===================================== --}}
     {{-- NAVIGASI PANEL ADMIN                  --}}
     {{-- ===================================== --}}
-    <nav class="bg-gray-800 text-white shadow-md">
+    <nav class="bg-gray-800 text-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-6 py-3">
             <div class="flex justify-between items-center">
-                <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold">{{ config('app.name') }} - Admin Panel</a>
+
+                {{-- LOGO + ROLE BADGE --}}
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-xl font-bold">
+                    <span>{{ config('app.name') }}</span>
+                    {{-- Menampilkan Role User saat ini --}}
+                    <span class="text-[10px] uppercase tracking-wider text-blue-400 font-semibold px-1.5 py-0.5 rounded border border-blue-400/50">
+                        {{ strtoupper(auth()->user()->role ?? 'USER') }}
+                    </span>
+                </a>
+
+                {{-- KONFIGURASI MENU ADMIN BERDASARKAN ROLE --}}
+                @php
+                    $userRole = auth()->user()->role;
+
+                    // Daftar Menu & Hak Akses
+                    $adminMenuItems = [
+                        [
+                            'label' => 'Jemaat',
+                            'route' => 'admin.jemaat.index',
+                            'allowed' => ['admin']
+                        ],
+                        [
+                            'label' => 'Devosi',
+                            'route' => 'admin.devotionals.index',
+                            'allowed' => ['admin', 'gembala']
+                        ],
+                        [
+                            'label' => 'Slideshow',
+                            'route' => 'admin.slides.index',
+                            'allowed' => ['admin', 'pengurus']
+                        ],
+                        [
+                            'label' => 'Ibadah',
+                            'route' => 'admin.services.index',
+                            'allowed' => ['admin', 'pengurus']
+                        ],
+                        [
+                            'label' => 'Hamba Tuhan',
+                            'route' => 'admin.pastors.index',
+                            'allowed' => ['admin']
+                        ],
+                        [
+                            'label' => 'Komisi',
+                            'route' => 'admin.commissions.index',
+                            'allowed' => ['admin']
+                        ],
+                        [
+                            'label' => 'Artikel',
+                            'route' => 'admin.articles.index',
+                            'allowed' => ['admin', 'gembala', 'pengurus']
+                        ],
+                        [
+                            'label' => 'Acara',
+                            'route' => 'admin.events.index',
+                            'allowed' => ['admin', 'gembala']
+                        ],
+                        [
+                            'label' => 'QnA',
+                            'route' => 'admin.qna.index',
+                            'allowed' => ['admin', 'gembala']
+                        ],
+                        [
+                            'label' => 'Pengaturan',
+                            'route' => 'admin.settings.index',
+                            'allowed' => ['admin']
+                        ],
+                    ];
+                @endphp
 
                 {{-- Menu Desktop Admin --}}
                 <div class="hidden md:flex items-center space-x-6">
-                    @php
-                        function admin_nav_link($routeName, $label) {
-                            if (!Route::has($routeName)) return '';
-                            $isActive = request()->routeIs($routeName . '*');
+                    @foreach($adminMenuItems as $item)
+                        {{-- 1. Cek apakah Route ada (mencegah error jika route belum dibuat) --}}
+                        @if(!Route::has($item['route'])) @continue @endif
+
+                        {{-- 2. Cek apakah Role user diizinkan --}}
+                        @if(!in_array($userRole, $item['allowed'])) @continue @endif
+
+                        @php
+                            // Logika Active State (Support Wildcard sederhana)
+                            // Ambil nama depan route, misal: 'admin.jemaat.index' -> 'admin.jemaat'
+                            $baseRouteName = Str::beforeLast($item['route'], '.index');
+                            $isActive = request()->routeIs($baseRouteName . '*');
+
                             $classes = $isActive ? 'text-white font-semibold' : 'text-gray-400 hover:text-white';
                             $underlineClasses = $isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100';
-                            $url = route($routeName);
+                        @endphp
 
-                            return <<<HTML
-                                <div class="relative group">
-                                    <a href="{$url}" class="{$classes} transition-colors duration-300 py-2">
-                                        {$label}
-                                    </a>
-                                    <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-400 transform {$underlineClasses} transition-transform duration-300 ease-out origin-left"></span>
-                                </div>
-                            HTML;
-                        }
-                        $adminRoutes = [
-                            'admin.jemaat.index' => 'Jemaat',
-                            'admin.devotionals.index' => 'Devosi',
-                            'admin.slides.index' => 'Slideshow',
-                            'admin.services.index' => 'Ibadah',
-                            'admin.pastors.index' => 'Hamba Tuhan',
-                            'admin.commissions.index' => 'Komisi',
-                            'admin.articles.index' => 'Artikel',
-                            'admin.events.index' => 'Acara',
-                            'admin.qna.index' => 'QnA',
-                            'admin.settings.index' => 'Pengaturan',
-                        ];
-                    @endphp
-
-                    @foreach($adminRoutes as $route => $label)
-                        {!! admin_nav_link($route, $label) !!}
+                        <div class="relative group">
+                            <a href="{{ route($item['route']) }}" class="{{ $classes }} transition-colors duration-300 py-2">
+                                {{ $item['label'] }}
+                            </a>
+                            <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-400 transform {{ $underlineClasses }} transition-transform duration-300 ease-out origin-left"></span>
+                        </div>
                     @endforeach
 
-                    <a href="{{ route('home') }}" target="_blank" class="px-4 py-2 text-sm bg-blue-500 rounded hover:bg-blue-600 transition-colors">Lihat Situs</a>
+                    <div class="h-6 border-l border-gray-600 mx-2"></div>
+
+                    <a href="{{ route('home') }}" target="_blank" class="px-4 py-2 text-sm bg-blue-600 rounded hover:bg-blue-700 transition-colors shadow">Lihat Web</a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="px-4 py-2 text-sm bg-red-500 rounded hover:bg-red-600 transition-colors">Logout</button>
+                        <button type="submit" class="px-4 py-2 text-sm bg-red-600 rounded hover:bg-red-700 transition-colors shadow">Logout</button>
                     </form>
                 </div>
 
@@ -95,16 +154,26 @@
             </div>
 
             {{-- Menu Mobile Admin --}}
-            <div id="admin-mobile-menu" class="hidden md:hidden mt-3 space-y-1" data-toggle-menu>
-                @foreach($adminRoutes as $route => $label)
-                    @if(Route::has($route))
-                        <a href="{{ route($route) }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">{{ $label }}</a>
+            <div id="admin-mobile-menu" class="hidden md:hidden mt-3 space-y-1 pb-4 border-t border-gray-700 pt-2" data-toggle-menu>
+                @foreach($adminMenuItems as $item)
+                    @if(Route::has($item['route']) && in_array($userRole, $item['allowed']))
+                        @php
+                            $baseRouteNameMobile = Str::beforeLast($item['route'], '.index');
+                            $isActiveMobile = request()->routeIs($baseRouteNameMobile . '*');
+                            $mobileClass = $isActiveMobile ? 'bg-gray-900 text-white pl-4 border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700 hover:text-white';
+                        @endphp
+                        <a href="{{ route($item['route']) }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass }}">
+                            {{ $item['label'] }}
+                        </a>
                     @endif
                 @endforeach
-                <a href="{{ route('home') }}" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Lihat Situs Publik</a>
+
+                <hr class="border-gray-600 my-2">
+
+                <a href="{{ route('home') }}" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-blue-300">Lihat Situs Publik</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Logout</button>
+                    <button type="submit" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-red-300">Logout</button>
                 </form>
             </div>
         </div>
@@ -167,10 +236,11 @@
                 @endguest
                 @auth
                     <div class="flex items-center">
+                        {{-- Notifikasi --}}
                         <div class="relative" id="notification-bell-container">
-                            <button id="notification-bell-button" data-toggle-button data-toggle-target="#notification-dropdown" class="text-gray-600 hover:text-blue-600 focus:outline-none mr-5">
+                            <button id="notification-bell-button" data-toggle-button data-toggle-target="#notification-dropdown" class="text-gray-600 hover:text-blue-600 focus:outline-none mr-5 relative">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                                <span id="notification-count" class="absolute end-4 -top-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden"></span>
+                                <span id="notification-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden"></span>
                             </button>
                             <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden" data-toggle-menu>
                                 <div class="p-4 font-bold border-b flex justify-between items-center">
@@ -197,7 +267,7 @@
                                 @endif
                             </button>
                             <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50" data-toggle-menu>
-                                @if (Auth::user()->role === 'admin')
+                                @if (Auth::user()->role === 'admin' || Auth::user()->role === 'gembala' || Auth::user()->role === 'pengurus')
                                     <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-bold bg-yellow-100">Admin Panel</a>
                                 @endif
                                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Saya</a>
@@ -239,7 +309,7 @@
                 <a href="{{ route('register') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Register</a>
             @endguest
             @auth
-                @if (Auth::user()->role === 'admin')
+                @if (Auth::user()->role === 'admin' || Auth::user()->role === 'gembala' || Auth::user()->role === 'pengurus')
                     <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Admin Panel</a>
                 @endif
                 <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Profil Saya</a>
@@ -417,4 +487,3 @@
 
 </body>
 </html>
-

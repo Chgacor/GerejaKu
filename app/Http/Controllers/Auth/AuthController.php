@@ -19,9 +19,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // 1. Validasi
         $request->validate([
-            // Ubah nama_lengkap jadi full_name agar sesuai form view
             'full_name' => 'required|string|max:255',
             'username'  => 'required|string|max:255|unique:users,name|alpha_dash',
             'email'     => 'required|string|email|max:255|unique:users,email',
@@ -29,25 +27,22 @@ class AuthController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
+            $user = new User();
+            $user->name = $request->username;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->role = 'user';
+            $user->is_active = false;
+            $user->save();
 
-            // A. Buat Akun Login (Users)
-            $user = User::create([
-                'name'     => $request->username,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
-                'role'     => 'user',
-            ]);
-
-            // B. Buat Profil (Jemaats) dengan nama kolom bahasa Inggris
             Jemaat::create([
                 'user_id'   => $user->id,
-                'full_name' => $request->full_name, // Mapping ke kolom full_name
+                'full_name' => $request->full_name,
             ]);
 
-            Auth::login($user);
         });
 
-        return redirect('/')->with('success', 'Registrasi berhasil!');
+        return redirect('/login')->with('success', 'Registrasi berhasil! Mohon tunggu verifikasi admin (maksimal 1 minggu).');
     }
 
     public function showLoginForm()
@@ -67,10 +62,20 @@ class AuthController extends Controller
             'password' => $request->password
         ];
 
+        // Attempt login
         if (Auth::attempt($credentials, $request->filled('remember'))) {
+            $user = Auth::user();
+
+            // Check if verified
+            if (!$user->is_active && $user->role !== 'admin') { // Super admin exception just in case
+                Auth::logout();
+                $request->session()->invalidate();
+                return back()->withErrors(['username' => 'Akun Anda belum diverifikasi oleh Admin.']);
+            }
+
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
+            if (in_array($user->role, ['admin', 'passenger', 'super_admin'])) {
                 return redirect()->intended('/admin');
             }
 

@@ -8,18 +8,92 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
+{{--
+    KONFIGURASI MENU DAN PERMISSION ROLE
+    Kita definisikan array ini di sini agar bisa dipakai
+    baik di Desktop Menu maupun Mobile Menu.
+--}}
+@php
+    $userRole = auth()->user()->role; // Ambil role user yang sedang login
+
+    $menuItems = [
+        [
+            'label' => 'Jemaat',
+            'route' => 'admin.jemaat.*',
+            'url' => route('admin.jemaat.index'),
+            'allowed_roles' => ['admin']
+        ],
+        [
+            'label' => 'Devosi',
+            'route' => 'admin.devotionals.*',
+            'url' => route('admin.devotionals.index'),
+            'allowed_roles' => ['admin', 'gembala']
+        ],
+        [
+            'label' => 'Slide',
+            'route' => 'admin.slides.*',
+            'url' => route('admin.slides.index'),
+            'allowed_roles' => ['admin', 'pengurus']
+        ],
+        [
+            'label' => 'Ibadah',
+            'route' => 'admin.services.*',
+            'url' => route('admin.services.index'),
+            'allowed_roles' => ['admin', 'pengurus']
+        ],
+        [
+            'label' => 'Profil',
+            'route' => 'admin.pastors.*',
+            'url' => route('admin.pastors.index'),
+            'allowed_roles' => ['admin']
+        ],
+        [
+            'label' => 'Komisi',
+            'route' => 'admin.commissions.*',
+            'url' => route('admin.commissions.index'),
+            'allowed_roles' => ['admin']
+        ],
+        [
+            'label' => 'Artikel',
+            'route' => 'admin.articles.*',
+            'url' => route('admin.articles.index'),
+            'allowed_roles' => ['admin', 'gembala', 'pengurus']
+        ],
+        [
+            'label' => 'Acara',
+            'route' => 'admin.events.*',
+            'url' => route('admin.events.index'),
+            'allowed_roles' => ['admin', 'gembala']
+        ],
+        [
+            'label' => 'QnA',
+            'route' => 'admin.qna.*',
+            'url' => route('admin.qna.index'),
+            'allowed_roles' => ['admin', 'gembala']
+        ],
+        [
+            'label' => 'Pengaturan',
+            'route' => 'admin.settings.*',
+            'url' => route('admin.settings.index'),
+            'allowed_roles' => ['admin']
+        ],
+    ];
+@endphp
+
 <nav class="bg-gray-800 text-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4"> {{-- px dikurangi sedikit agar area lebih luas --}}
-        <div class="flex justify-between items-center h-20"> {{-- h-20 memberikan ruang napas lebih baik --}}
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-20">
 
             {{-- LOGO / BRAND --}}
             <a href="{{ route('admin.dashboard') }}" class="flex-shrink-0 flex items-center space-x-2 mr-4">
                 <span class="text-lg font-bold tracking-tight">{{ config('app.name') }}</span>
-                <span class="text-[10px] uppercase tracking-wider text-blue-400 font-semibold px-1.5 py-0.5 rounded border border-blue-400/50">Admin</span>
+                <span class="text-[10px] uppercase tracking-wider text-blue-400 font-semibold px-1.5 py-0.5 rounded border border-blue-400/50">
+                    {{-- Menampilkan Role User saat ini agar jelas --}}
+                    {{ strtoupper($userRole) }}
+                </span>
             </a>
 
             {{-- MENU DESKTOP --}}
-            {{-- Ubah ke lg:flex agar layar tablet tetap menggunakan hamburger --}}
             <div class="hidden lg:flex items-center space-x-1 xl:space-x-3">
 
                 @php
@@ -32,19 +106,12 @@
                     };
                 @endphp
 
-                {{-- Item Menu - Menggunakan text-sm dan whitespace-nowrap --}}
-                @foreach([
-                    ['route' => 'admin.jemaat.*', 'url' => route('admin.jemaat.index'), 'label' => 'Jemaat'],
-                    ['route' => 'admin.devotionals.*', 'url' => route('admin.devotionals.index'), 'label' => 'Devosi'],
-                    ['route' => 'admin.slides.*', 'url' => route('admin.slides.index'), 'label' => 'Slide'],
-                    ['route' => 'admin.services.*', 'url' => route('admin.services.index'), 'label' => 'Ibadah'],
-                    ['route' => 'admin.pastors.*', 'url' => route('admin.pastors.index'), 'label' => 'Profil'],
-                    ['route' => 'admin.commissions.*', 'url' => route('admin.commissions.index'), 'label' => 'Komisi'],
-                    ['route' => 'admin.articles.*', 'url' => route('admin.articles.index'), 'label' => 'Artikel'],
-                    ['route' => 'admin.events.*', 'url' => route('admin.events.index'), 'label' => 'Acara'],
-                    ['route' => 'admin.qna.*', 'url' => route('admin.qna.index'), 'label' => 'QnA'],
-                    ['route' => 'admin.settings.*', 'url' => route('admin.settings.index'), 'label' => 'Pengaturan'],
-                ] as $item)
+                @foreach($menuItems as $item)
+                    {{-- CEK PERMISSION: Jika role user TIDAK ada di daftar allowed_roles, lewati (hidden) --}}
+                    @if(!in_array($userRole, $item['allowed_roles']))
+                        @continue
+                    @endif
+
                     @php $s = $navClass($item['route']); @endphp
                     <div class="relative group">
                         <a href="{{ $item['url'] }}" class="{{ $s['link'] }} text-sm whitespace-nowrap transition-colors duration-300 px-2 py-2 block">
@@ -95,16 +162,17 @@
                 };
             @endphp
 
-            <a href="{{ route('admin.jemaat.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.jemaat.*') }}">Jemaat</a>
-            <a href="{{ route('admin.devotionals.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.devotionals.*') }}">Devosi</a>
-            <a href="{{ route('admin.slides.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.slides.*') }}">Slideshow</a>
-            <a href="{{ route('admin.services.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.services.*') }}">Ibadah</a>
-            <a href="{{ route('admin.pastors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.pastors.*') }}">Profil</a>
-            <a href="{{ route('admin.commissions.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.commissions.*') }}">Komisi</a>
-            <a href="{{ route('admin.articles.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.articles.*') }}">Artikel</a>
-            <a href="{{ route('admin.events.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.events.*') }}">Acara</a>
-            <a href="{{ route('admin.qna.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.qna.*') }}">QnA</a>
-            <a href="{{ route('admin.settings.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass('admin.settings.*') }}">Pengaturan</a>
+            {{-- Loop Menu Mobile menggunakan Array yang sama dengan Desktop --}}
+            @foreach($menuItems as $item)
+                {{-- CEK PERMISSION MOBILE --}}
+                @if(!in_array($userRole, $item['allowed_roles']))
+                    @continue
+                @endif
+
+                <a href="{{ $item['url'] }}" class="block px-3 py-2 rounded-md text-base font-medium {{ $mobileClass($item['route']) }}">
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
 
             <div class="border-t border-gray-700 my-2 pt-2">
                 <a href="{{ route('home') }}" target="_blank" class="block px-3 py-2 rounded-md text-base font-medium text-blue-400 hover:bg-gray-700">
