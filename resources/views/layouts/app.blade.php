@@ -105,6 +105,11 @@
                             'route' => 'admin.settings.index',
                             'allowed' => ['admin']
                         ],
+                        [
+                            'label' => 'Verifikasi User',
+                            'route' => 'admin.verifications.index',
+                            'allowed' => ['admin']
+                        ],
                     ];
                 @endphp
 

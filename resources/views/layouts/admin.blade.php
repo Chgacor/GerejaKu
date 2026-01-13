@@ -77,6 +77,12 @@
             'url' => route('admin.settings.index'),
             'allowed_roles' => ['admin']
         ],
+        [
+            'label' => 'Verifikasi User',
+            'route' => 'admin.verifications.index',
+            'url' => route('admin.verifications.index'),
+            'allowed_roles' => ['admin']
+        ],
     ];
 @endphp
 

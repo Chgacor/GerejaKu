@@ -52,39 +52,33 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        $credentials = [
-            'name'     => $request->username,
-            'password' => $request->password
-        ];
-
-        // Attempt login
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // Check if verified
-            if (!$user->is_active && $user->role !== 'admin') { // Super admin exception just in case
+            if ($user->is_approved == 0) {
                 Auth::logout();
-                $request->session()->invalidate();
-                return back()->withErrors(['username' => 'Akun Anda belum diverifikasi oleh Admin.']);
+                return back()->withErrors([
+                    'email' => 'Akun Anda belum disetujui oleh Admin. Silakan hubungi Sekretariat.',
+                ]);
             }
 
             $request->session()->regenerate();
 
-            if (in_array($user->role, ['admin', 'passenger', 'super_admin'])) {
-                return redirect()->intended('/admin');
+            // Redirect sesuai role
+            if ($user->role === 'user') {
+                return redirect()->intended('/');
             }
-
-            return redirect()->intended('/');
+            return redirect()->intended('/admin');
         }
 
         return back()->withErrors([
-            'username' => 'Username atau Password salah.',
-        ])->onlyInput('username');
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
     public function logout(Request $request)

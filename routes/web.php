@@ -107,6 +107,7 @@ Route::middleware(['auth', 'role:admin,gembala,pengurus'])->prefix('admin')->nam
     Route::middleware('role:admin')->group(function() {
         Route::resource('jemaat', AdminJemaatController::class);
         Route::get('/jemaat-cards', [AdminJemaatController::class, 'cardView'])->name('jemaat.cards');
+        Route::post('/jemaat/{jemaat}/reset-password', [AdminJemaatController::class, 'resetPassword'])->name('jemaat.reset_password');
         Route::resource('departments', AdminDepartmentController::class);
         Route::resource('pastors', AdminPastorController::class);
         Route::resource('commissions', AdminCommissionController::class);
@@ -115,7 +116,9 @@ Route::middleware(['auth', 'role:admin,gembala,pengurus'])->prefix('admin')->nam
 
         // Verifikasi
         Route::get('/verifications', [UserVerificationController::class, 'index'])->name('verifications.index');
-        Route::post('/verifications/{user}/approve', [UserVerificationController::class, 'approve'])->name('verifications.approve');
+        // VERIFICATION ROUTES
+        Route::get('/verifications', [UserVerificationController::class, 'index'])->name('verifications.index');
+        Route::post('/verifications/{user}/toggle', [UserVerificationController::class, 'toggleStatus'])->name('verifications.toggle');
         Route::post('/verifications/{user}/reset-password', [UserVerificationController::class, 'approvePasswordReset'])->name('verifications.password_reset');
     });
 });

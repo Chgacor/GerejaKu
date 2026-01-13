@@ -35,7 +35,7 @@ class User extends Authenticatable
 
     public function jemaat()
     {
-        return $this->hasOne(Jemaat::class);
+        return $this->hasOne(Jemaat::class, 'user_id');
     }
 
     public function hasRole($role)

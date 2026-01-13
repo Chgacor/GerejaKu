@@ -2,6 +2,35 @@
 
 @section('content')
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+
+        <div class="mb-4">
+            {{-- Alert Success (Hijau) --}}
+            @if(session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 shadow-sm rounded-r relative" role="alert">
+                    <p class="font-bold">Berhasil!</p>
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
+
+            {{-- Alert Warning (Kuning - Jika pakai tgl lahir default) --}}
+            @if(session('warning'))
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 shadow-sm rounded-r relative" role="alert">
+                    <p class="font-bold">Perhatian:</p>
+                    <p>{{ session('warning') }}</p>
+                </div>
+            @endif
+
+            {{-- Alert Error (Merah) --}}
+            @if(session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 shadow-sm rounded-r relative" role="alert">
+                    <p class="font-bold">Error:</p>
+                    <p>{{ session('error') }}</p>
+                </div>
+            @endif
+        </div>
+        {{-- END NOTIFIKASI --}}
+
+
         <div class="mb-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h1 class="text-2xl font-bold text-gray-800">Data Jemaat</h1>
@@ -19,11 +48,10 @@
             </div>
 
             {{-- FORM FILTER --}}
-            {{-- Menggunakan Grid System agar rapi di semua device --}}
             <form action="{{ route('admin.jemaat.index') }}" method="GET">
                 <div class="grid grid-cols-2 md:grid-cols-12 gap-4">
 
-                    {{-- Filter Kategori: Full width di HP, 3 kolom di Laptop --}}
+                    {{-- Filter Kategori --}}
                     <div class="col-span-2 md:col-span-3">
                         <select name="kategori" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 bg-white" onchange="this.form.submit()">
                             <option value="">Semua Kategori Umur</option>
@@ -34,7 +62,7 @@
                         </select>
                     </div>
 
-                    {{-- Filter Bulan: Setengah lebar di HP, 2 kolom di Laptop --}}
+                    {{-- Filter Bulan --}}
                     <div class="col-span-1 md:col-span-2">
                         <select name="bulan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 bg-white" onchange="this.form.submit()">
                             <option value="">Bulan Lahir</option>
@@ -46,13 +74,13 @@
                         </select>
                     </div>
 
-                    {{-- Filter Tahun: Setengah lebar di HP, 2 kolom di Laptop --}}
+                    {{-- Filter Tahun --}}
                     <div class="col-span-1 md:col-span-2">
                         <input type="number" name="tahun" placeholder="Thn Lahir" value="{{ request('tahun') }}"
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
-                    {{-- Search Text: Full width di HP, Sisa kolom di Laptop --}}
+                    {{-- Search Text --}}
                     <div class="col-span-2 md:col-span-5 flex gap-2">
                         <input
                             type="text"
@@ -67,7 +95,6 @@
                             </svg>
                         </button>
 
-                        {{-- Tombol Reset (Muncul jika ada filter aktif) --}}
                         @if(request()->anyFilled(['search', 'kategori', 'bulan', 'tahun']))
                             <a href="{{ route('admin.jemaat.index') }}"
                                class="bg-red-100 text-red-500 border border-red-200 p-2 rounded-lg hover:bg-red-500 hover:text-white transition flex items-center justify-center" title="Reset Filter">
@@ -96,7 +123,7 @@
                     <th class="py-3 px-6 text-left">Nama Jemaat</th>
                     <th class="py-3 px-6 text-left">Kategori</th>
                     <th class="py-3 px-6 text-left">Umur</th>
-                    <th class="py-3 px-6 text-left hidden md:table-cell">No Telepon</th> {{-- Sembunyikan di HP kecil --}}
+                    <th class="py-3 px-6 text-left hidden md:table-cell">No Telepon</th>
                     <th class="py-3 px-6 text-center">Aksi</th>
                 </tr>
                 </thead>
@@ -105,7 +132,6 @@
                     <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
                         <td class="py-3 px-6 text-left whitespace-nowrap">
                             <div class="flex items-center">
-                                {{-- Jika ada foto profil, tampilkan (Opsional) --}}
                                 @if($data->profile_picture)
                                     <img class="w-8 h-8 rounded-full mr-2 object-cover" src="{{ Storage::url($data->profile_picture) }}" alt="Avatar">
                                 @else
@@ -115,7 +141,7 @@
                                 @endif
                                 <div>
                                     <span class="font-medium text-gray-800">{{ $data->full_name }}</span>
-                                    <div class="text-xs text-gray-400 block md:hidden">{{ $data->phone_number }}</div> {{-- Tampil di HP --}}
+                                    <div class="text-xs text-gray-400 block md:hidden">{{ $data->phone_number }}</div>
                                 </div>
                             </div>
                         </td>
@@ -144,17 +170,37 @@
                             {{ $data->phone_number }}
                         </td>
 
+                        {{-- KOLOM AKSI --}}
                         <td class="py-3 px-6 text-center">
                             <div class="flex item-center justify-center space-x-2">
-                                <a href="{{ route('admin.jemaat.show', $data->id) }}" class="p-1 text-blue-500 hover:text-blue-700 transition" title="Lihat">
+
+                                {{-- Tombol Lihat --}}
+                                <a href="{{ route('admin.jemaat.show', $data->id) }}" class="p-1 text-blue-500 hover:text-blue-700 transition" title="Lihat Detail">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </a>
-                                <a href="{{ route('admin.jemaat.edit', $data->id) }}" class="p-1 text-yellow-500 hover:text-yellow-700 transition" title="Edit">
+
+                                {{-- Tombol Edit --}}
+                                <a href="{{ route('admin.jemaat.edit', $data->id) }}" class="p-1 text-yellow-500 hover:text-yellow-700 transition" title="Edit Data">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                 </a>
+
+                                {{-- TOMBOL RESET PASSWORD --}}
+                                @if($data->user)
+                                    <form action="{{ route('admin.jemaat.reset_password', $data->id) }}" method="POST" onsubmit="return confirm('Reset password akun ini ke Tanggal Lahir?');" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="p-1 text-gray-500 hover:text-gray-900 transition" title="Reset Password Akun Login">
+                                            {{-- Ikon Kunci --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                {{-- Tombol Hapus --}}
                                 <form action="{{ route('admin.jemaat.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Hapus data ini?');" class="inline-block">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="p-1 text-red-500 hover:text-red-700 transition" title="Hapus">
+                                    <button type="submit" class="p-1 text-red-500 hover:text-red-700 transition" title="Hapus Data">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                     </button>
                                 </form>

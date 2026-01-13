@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class JemaatController extends Controller
 {
@@ -157,5 +158,54 @@ class JemaatController extends Controller
             $jemaat->user->delete(); // Hapus user otomatis hapus jemaat (cascade)
         });
         return redirect()->route('admin.jemaat.index')->with('success', 'Data dihapus.');
+    }
+
+    public function resetPassword(Jemaat $jemaat)
+    {
+        // Cek User
+        if (!$jemaat->user) {
+            return back()->with('error', 'Gagal: Jemaat ini belum terhubung ke akun User manapun.');
+        }
+
+        $user = $jemaat->user;
+        $msgType = 'success'; // Default Hijau
+        $message = '';
+
+        // Cek Tanggal Lahir
+        if (!$jemaat->user) {
+            return back()->with('error', 'Gagal: Jemaat ini belum terhubung ke akun User manapun.');
+        }
+
+        $user = $jemaat->user;
+        $msgType = 'success';
+        $message = '';
+
+        // PERBAIKAN: Gunakan 'birth_date' sesuai database kamu
+        if ($jemaat->birth_date) {
+            // Ambil birth_date, format jadi ddmmyyyy (28051985)
+            $tglLahir = \Carbon\Carbon::parse($jemaat->birth_date)->format('dmY');
+
+            $newPassword = 'gkkbserdam' . $tglLahir;
+            $message = "Password {$jemaat->full_name} berhasil direset menjadi: {$newPassword}";
+        } else {
+            // Fallback
+            $tglLahir = '01012000';
+            $newPassword = 'gkkbserdam' . $tglLahir;
+            $msgType = 'warning';
+            $message = "Tanggal Lahir (birth_date) KOSONG. Password direset ke default: {$newPassword}";
+        }
+
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($newPassword)
+        ]);
+
+        return back()->with($msgType, $message);
+
+        $user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+
+        // Kirim pesan sesuai tipe (success/warning)
+        return back()->with($msgType, $message);
     }
 }
