@@ -14,10 +14,25 @@ use Illuminate\Support\Facades\Notification;
 
 class CommissionArticleController extends Controller
 {
-    public function index(Commission $commission = null) {
-        $articles = $commission
-            ? $commission->articles()->latest()->paginate(15)
-            : CommissionArticle::with('commission')->latest()->paginate(15);
+    // Di AdminCommissionArticleController.php
+
+    public function index(Request $request, Commission $commission = null)
+    {
+        $query = CommissionArticle::query()->with('commission');
+
+        // Jika filter per komisi
+        if ($commission) {
+            $query->where('commission_id', $commission->id);
+        }
+
+        // Jika ada pencarian
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $articles = $query->latest()->paginate(10);
+
+        // Kirim $commission ke view (bisa null kalau global)
         return view('admin.articles.index', compact('articles', 'commission'));
     }
 
