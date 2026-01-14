@@ -13,9 +13,16 @@ class CommissionController extends Controller
     /**
      * Menampilkan daftar semua komisi.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $commissions = Commission::latest()->paginate(10);
+        $query = \App\Models\Commission::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('head_of_commission', 'like', '%' . $request->search . '%');
+        }
+
+        $commissions = $query->paginate(10);
         return view('admin.commissions.index', compact('commissions'));
     }
 
