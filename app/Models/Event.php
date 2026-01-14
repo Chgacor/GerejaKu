@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,14 +10,22 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'start_time', 'end_time',
-        'speaker', 'division_id', 'type', 'image', 'is_featured', 'color'
+        'title',
+        'type',             // Ibadah, Acara, Latihan
+        'description',
+        'start_time',
+        'end_time',
+        'speaker',          // Nullable
+        'division_id',      // Nullable
+        'image',            // Nullable
+        'is_featured',      // <--- WAJIB ADA
+        'color',            // <--- WAJIB ADA
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
-        'end_time' => 'datetime',
-        'is_featured' => 'boolean',
+        'end_time'   => 'datetime',
+        'is_featured' => 'boolean', // Agar otomatis jadi true/false
     ];
 
     public function division()
