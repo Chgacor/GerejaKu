@@ -10,9 +10,22 @@ use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::with('division')->orderBy('service_time', 'desc')->paginate(10);
+        $query = \App\Models\Service::with('division'); // Eager load division biar query ringan
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('speaker', 'like', "%{$search}%")
+                    ->orWhereHas('division', function($subQ) use ($search) {
+                        $subQ->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $services = $query->latest('service_time')->paginate(10);
         return view('admin.services.index', compact('services'));
     }
 
