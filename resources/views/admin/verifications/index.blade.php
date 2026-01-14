@@ -1,130 +1,157 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container mx-auto px-4 py-6">
 
+    {{-- JUDUL HALAMAN --}}
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">Verifikasi & Manajemen User</h1>
+    </div>
+
+    {{-- ================================================== --}}
+    {{-- TABEL 1: PERMINTAAN VERIFIKASI USER BARU          --}}
+    {{-- ================================================== --}}
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg mb-10 border-t-4 border-blue-500">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Verifikasi & Manajemen User</h2>
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                    User Baru (Pending Approval)
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">Daftar pengguna baru yang menunggu persetujuan login.</p>
+            </div>
+            @if($pendingUsers->count() > 0)
+                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                    {{ $pendingUsers->count() }} Menunggu
+                </span>
+            @endif
         </div>
 
-        {{-- Alert Success --}}
-        @if(session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 shadow-sm rounded-r relative" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        {{-- Alert Warning --}}
-        @if(session('warning'))
-            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 shadow-sm rounded-r relative" role="alert">
-                <span class="block sm:inline">{{ session('warning') }}</span>
-            </div>
-        @endif
-
-        {{-- Alert Error --}}
-        @if(session('error'))
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 shadow-sm rounded-r relative" role="alert">
-                <span class="block sm:inline font-bold">Error:</span>
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
-            <div class="overflow-x-auto">
-                <table class="min-w-full leading-normal">
-                    <thead>
-                    <tr class="bg-gray-100 border-b border-gray-200">
-                        <th class="px-5 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nama / Email</th>
-                        <th class="px-5 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Role</th>
-                        <th class="px-5 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-                        <th class="px-5 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Koneksi Data</th>
-                        <th class="px-5 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Tanggal Daftar</th>
-                        <th class="px-5 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-bold leading-normal">
+                <tr>
+                    <th class="py-3 px-6 text-left">Nama Lengkap</th>
+                    <th class="py-3 px-6 text-left">Username / Email</th>
+                    <th class="py-3 px-6 text-left">Tanggal Daftar</th>
+                    <th class="py-3 px-6 text-center">Aksi</th>
+                </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                @forelse($pendingUsers as $user)
+                    <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">
+                            <span class="font-medium text-gray-800">{{ $user->name }}</span>
+                        </td>
+                        <td class="py-3 px-6 text-left">
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-gray-700">{{ $user->username ?? '-' }}</span>
+                                <span class="text-xs text-gray-500">{{ $user->email }}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-6 text-left">
+                            {{ $user->created_at->format('d M Y, H:i') }}
+                            <span class="text-xs text-gray-400 block">({{ $user->created_at->diffForHumans() }})</span>
+                        </td>
+                        <td class="py-3 px-6 text-center">
+                            <form id="approve-{{ $user->id }}" action="{{ route('admin.verifications.toggle', $user->id) }}" method="POST">
+                                @csrf
+                                <button type="button"
+                                        onclick="confirmAction(event, 'approve-{{ $user->id }}', 'Terima User Ini?', 'User akan diizinkan login ke sistem.', 'Ya, Terima', '#10b981')"
+                                        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md text-xs transition transform hover:scale-105 flex items-center justify-center gap-1 mx-auto">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                    Terima
+                                </button>
+                            </form>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($users as $user)
-                        <tr class="hover:bg-gray-50 transition duration-150 border-b border-gray-200">
-
-                            {{-- Nama & Email --}}
-                            <td class="px-5 py-4 bg-white text-sm">
-                                <div class="font-bold text-gray-900">{{ $user->name }}</div>
-                                <div class="text-gray-500 text-xs">{{ $user->email }}</div>
-                            </td>
-
-                            {{-- Role --}}
-                            <td class="px-5 py-4 bg-white text-sm text-center">
-                            <span class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full text-xs uppercase">
-                                {{ $user->role }}
-                            </span>
-                            </td>
-
-                            {{-- STATUS (Badge Aktif/Pending) --}}
-                            <td class="px-5 py-4 bg-white text-sm text-center">
-                                @if($user->is_approved)
-                                    <span class="px-2 py-1 font-bold leading-tight text-green-700 bg-green-100 rounded-full text-xs">
-                                    ✔ AKTIF
-                                </span>
-                                @else
-                                    <span class="px-2 py-1 font-bold leading-tight text-red-700 bg-red-100 rounded-full text-xs">
-                                    ⏳ PENDING
-                                </span>
-                                @endif
-                            </td>
-
-                            {{-- Indikator Koneksi Data Jemaat (Untuk debug password) --}}
-                            <td class="px-5 py-4 bg-white text-sm text-center">
-                                @if($user->jemaat)
-                                    <div class="text-green-600 font-bold text-xs">✔ Terhubung</div>
-                                    <div class="text-gray-400 text-[10px]">
-                                        Lahir: {{ $user->jemaat->tanggal_lahir ? \Carbon\Carbon::parse($user->jemaat->tanggal_lahir)->format('d-m-Y') : 'KOSONG' }}
-                                    </div>
-                                @else
-                                    <div class="text-red-500 font-bold text-xs">❌ Putus</div>
-                                    <div class="text-gray-400 text-[10px]">Tidak ada data jemaat</div>
-                                @endif
-                            </td>
-
-                            {{-- Tanggal Daftar --}}
-                            <td class="px-5 py-4 bg-white text-sm text-center text-gray-600">
-                                {{ $user->created_at->format('d M Y') }}
-                            </td>
-
-                            {{-- AKSI (Tombol Berubah) --}}
-                            <td class="px-5 py-4 bg-white text-sm text-center">
-                                <div class="flex items-center justify-center space-x-2">
-
-                                    {{-- Tombol Toggle Status --}}
-                                    <form action="{{ route('admin.verifications.toggle', $user->id) }}" method="POST">
-                                        @csrf
-                                        @if($user->is_approved)
-                                            {{-- Jika Aktif -> Tombol Batalkan/Nonaktifkan --}}
-                                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs transition shadow" onclick="return confirm('Nonaktifkan user ini? Dia tidak akan bisa login lagi.')">
-                                                 Batalkan
-                                            </button>
-                                        @else
-                                            {{-- Jika Pending -> Tombol Terima --}}
-                                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-xs transition shadow" onclick="return confirm('Terima user ini?')">
-                                                 Terima
-                                            </button>
-                                        @endif
-                                    </form>
-
-                                    {{-- Tombol Reset Pass --}}
-                                    <form action="{{ route('admin.verifications.password_reset', $user->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs transition shadow" onclick="return confirm('Reset password berdasarkan tanggal lahir?')">
-                                             Reset
-                                        </button>
-                                    </form>
-
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
+                @empty
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-gray-500 bg-gray-50 italic">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <p>Tidak ada user baru yang perlu diverifikasi.</p>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+
+
+    {{-- ================================================== --}}
+    {{-- TABEL 2: PERMINTAAN RESET PASSWORD                --}}
+    {{-- ================================================== --}}
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg border-t-4 border-yellow-500">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                    Permintaan Reset Password
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">User yang lupa password dan meminta reset manual.</p>
+            </div>
+            @if($resetRequests->count() > 0)
+                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full animate-pulse">
+                    {{ $resetRequests->count() }} Permintaan
+                </span>
+            @endif
+        </div>
+
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-bold leading-normal">
+                <tr>
+                    <th class="py-3 px-6 text-left">Nama User</th>
+                    <th class="py-3 px-6 text-left">Identitas Akun</th>
+                    <th class="py-3 px-6 text-left">Waktu Request</th>
+                    <th class="py-3 px-6 text-center">Aksi</th>
+                </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                @forelse($resetRequests as $req)
+                    <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">
+                            <span class="font-medium text-gray-800">{{ $req->name }}</span>
+                        </td>
+                        <td class="py-3 px-6 text-left">
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-gray-700">{{ $req->username ?? '-' }}</span>
+                                <span class="text-xs text-gray-500">{{ $req->email }}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-6 text-left">
+                            {{ $req->password_reset_requested_at->format('d M Y, H:i') }}
+                            <span class="text-xs text-red-500 font-bold block">
+                                    ({{ $req->password_reset_requested_at->diffForHumans() }})
+                                </span>
+                        </td>
+                        <td class="py-3 px-6 text-center">
+                            <form id="reset-req-{{ $req->id }}" action="{{ route('admin.verifications.password_reset', $req->id) }}" method="POST">
+                                @csrf
+                                <button type="button"
+                                        onclick="confirmAction(event, 'reset-req-{{ $req->id }}', 'Reset Password User Ini?', 'Password akan direset ke Tanggal Lahir (atau default).', 'Ya, Reset Password', '#f59e0b')"
+                                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded shadow-md text-xs transition transform hover:scale-105 flex items-center justify-center gap-1 mx-auto">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    Reset
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-gray-500 bg-gray-50 italic">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <p>Tidak ada permintaan reset password baru.</p>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 @endsection

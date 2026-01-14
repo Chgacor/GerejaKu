@@ -200,12 +200,5 @@ class JemaatController extends Controller
         ]);
 
         return back()->with($msgType, $message);
-
-        $user->update([
-            'password' => Hash::make($newPassword)
-        ]);
-
-        // Kirim pesan sesuai tipe (success/warning)
-        return back()->with($msgType, $message);
     }
 }

@@ -10,9 +10,17 @@ use Illuminate\Support\Facades\Storage;
 
 class DevotionalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $devotionals = Devotional::latest()->paginate(9);
+        $query = Devotional::query();
+
+        // Logika Search
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('scripture_reference', 'like', '%' . $request->search . '%');
+        }
+
+        $devotionals = $query->latest()->paginate(10);
         return view('admin.devotionals.index', compact('devotionals'));
     }
 

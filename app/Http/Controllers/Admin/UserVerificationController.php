@@ -12,56 +12,49 @@ class UserVerificationController extends Controller
 {
     public function index()
     {
-        // Ambil SEMUA user (kecuali diri sendiri), urutkan yang pending di atas
-        $users = User::where('id', '!=', auth()->id())
-            ->orderBy('is_approved', 'asc') // Yang 0 (pending) di atas
-            ->orderBy('created_at', 'desc')
+        // 1. Ambil List User Baru (Belum Approved)
+        $pendingUsers = \App\Models\User::where('is_approved', 0)
+            ->where('id', '!=', auth()->id()) // Safety
+            ->latest()
             ->get();
 
-        return view('admin.verifications.index', compact('users'));
+        // 2. Ambil List User yang Minta Reset Password
+        $resetRequests = \App\Models\User::whereNotNull('password_reset_requested_at')
+            ->latest()
+            ->get();
+
+        return view('admin.verifications.index', compact('pendingUsers', 'resetRequests'));
     }
 
-    // Mengubah Status (Aktif <-> Nonaktif)
     public function toggleStatus(User $user)
     {
         $newState = !$user->is_approved;
         $user->update(['is_approved' => $newState]);
 
         $statusText = $newState ? 'DIAKTIFKAN' : 'DINONAKTIFKAN';
-        $msgType = $newState ? 'success' : 'warning'; // Hijau jika aktif, Kuning jika nonaktif
+        $msgType = $newState ? 'success' : 'warning';
 
         return redirect()->back()->with($msgType, "Akun {$user->name} berhasil {$statusText}!");
     }
 
     public function approvePasswordReset(User $user)
     {
-        // 1. Cek Relasi: Apakah User ini punya data Jemaat?
-        if (!$user->jemaat) {
-            // JIKA TIDAK ADA DATA JEMAAT
-            return redirect()->back()->with('error', "Gagal! User {$user->name} tidak terhubung dengan data Jemaat manapun. Password tidak direset.");
-        }
-
-        // 2. Cek Tanggal Lahir
-        if (empty($user->jemaat->tanggal_lahir)) {
-            // JIKA ADA DATA JEMAAT, TAPI TANGGAL LAHIR KOSONG
-            $default = '01012000';
-            $newPassword = 'gkkbserdam' . $default;
-
-            $user->update(['password' => Hash::make($newPassword)]);
-
-            return redirect()->back()->with('warning', "User punya data Jemaat tapi Tanggal Lahir KOSONG. Password direset ke default: {$newPassword}");
-        }
-
-        // 3. JIKA SEMUA DATA LENGKAP
-        try {
-            $tglLahir = Carbon::parse($user->jemaat->tanggal_lahir)->format('dmY');
+        // 1. Tentukan Password Baru (Berdasarkan Tanggal Lahir jika ada)
+        if ($user->jemaat && $user->jemaat->birth_date) {
+            $tglLahir = Carbon::parse($user->jemaat->birth_date)->format('dmY');
             $newPassword = 'gkkbserdam' . $tglLahir;
-
-            $user->update(['password' => Hash::make($newPassword)]);
-
-            return redirect()->back()->with('success', "Password {$user->name} berhasil direset menjadi: {$newPassword}");
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', "Terjadi kesalahan format tanggal: " . $e->getMessage());
+            $msgSuffix = "sesuai Tanggal Lahir ({$tglLahir})";
+        } else {
+            $newPassword = 'gkkbserdam01012000';
+            $msgSuffix = "ke Default (01012000)";
         }
+
+        // 2. Update Password & Hapus Flag Request
+        $user->update([
+            'password' => Hash::make($newPassword),
+            'password_reset_requested_at' => null // Hilangkan dari list request
+        ]);
+
+        return redirect()->back()->with('success', "Password {$user->name} berhasil direset {$msgSuffix}. Request selesai.");
     }
 }

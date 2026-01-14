@@ -105,20 +105,29 @@ Route::middleware(['auth', 'role:admin,gembala,pengurus'])->prefix('admin')->nam
     // 5. === KHUSUS ADMIN SUPER (Jemaat, Setting, User) ===
     // Gembala & Pengurus TIDAK BISA masuk sini
     Route::middleware('role:admin')->group(function() {
+
+        // Resource Jemaat
         Route::resource('jemaat', AdminJemaatController::class);
         Route::get('/jemaat-cards', [AdminJemaatController::class, 'cardView'])->name('jemaat.cards');
+
+        // Route Reset Password (Yang Ikon Kunci di Data Jemaat)
         Route::post('/jemaat/{jemaat}/reset-password', [AdminJemaatController::class, 'resetPassword'])->name('jemaat.reset_password');
+
+        // Resource Lainnya
         Route::resource('departments', AdminDepartmentController::class);
         Route::resource('pastors', AdminPastorController::class);
         Route::resource('commissions', AdminCommissionController::class);
+
+        // Settings
         Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
 
-        // Verifikasi
         Route::get('/verifications', [UserVerificationController::class, 'index'])->name('verifications.index');
-        // VERIFICATION ROUTES
-        Route::get('/verifications', [UserVerificationController::class, 'index'])->name('verifications.index');
+
+        // 2. Aksi Toggle (Terima / Batalkan)
         Route::post('/verifications/{user}/toggle', [UserVerificationController::class, 'toggleStatus'])->name('verifications.toggle');
+
+        // 3. Aksi Reset Password (TAMBAHKAN INI KEMBALI)
         Route::post('/verifications/{user}/reset-password', [UserVerificationController::class, 'approvePasswordReset'])->name('verifications.password_reset');
     });
 });
